@@ -22,11 +22,8 @@ export function buildOrderMessage({ config, items, mode, time, timeDayLabel, add
   if (name?.trim()) lines.push(`*Nombre:* ${name.trim()}`)
   if (notes?.trim()) lines.push(`*Observaciones:* ${notes.trim()}`)
   lines.push('')
-  lines.push(
-    mode === 'delivery'
-      ? '¿Tienen disponibilidad y cuánto sería el envío? ¡Gracias!'
-      : '¿Me confirman disponibilidad para esa hora? ¡Gracias!',
-  )
+  const closing = mode === 'delivery' ? config.cart?.closing_delivery : config.cart?.closing_pickup
+  if (closing?.trim()) lines.push(closing.trim())
   return lines.join('\n')
 }
 

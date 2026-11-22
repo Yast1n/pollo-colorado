@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 import { useStore } from '../context/StoreContext'
 import { ScrollTrigger } from '../lib/gsap'
-import { formatCLP } from '../utils/format'
+import { assetUrl, formatCLP } from '../utils/format'
 import Header, { AnnouncementBar } from '../components/Header'
 import Hero from '../components/Hero'
 import Menu from '../components/Menu'
@@ -33,7 +33,20 @@ function MobileCartBar() {
 }
 
 export default function Home() {
-  const { loading } = useStore()
+  const { loading, config } = useStore()
+
+  // SEO y favicon desde el admin.
+  useEffect(() => {
+    if (config.seo?.title) document.title = config.seo.title
+    const desc = document.querySelector('meta[name="description"]')
+    if (desc && config.seo?.description) desc.setAttribute('content', config.seo.description)
+    const icon = document.querySelector('link[rel="icon"]')
+    if (icon) {
+      const href = config.brand?.logo_url ? assetUrl(config.brand.logo_url) : assetUrl('favicon.svg')
+      icon.setAttribute('href', href)
+      icon.removeAttribute('type')
+    }
+  }, [config.seo, config.brand?.logo_url])
 
   // Recalcular disparadores cuando terminan de cargar fuentes y datos (cambian alturas).
   useEffect(() => {

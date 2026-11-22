@@ -41,12 +41,26 @@ const normalizeProduct = (p) => ({
   sort_order: Number(p.sort_order) || 0,
 })
 
-const withConfigDefaults = (data) => ({
-  ...SEED_CONFIG,
-  ...(data || {}),
-  socials: { ...SEED_CONFIG.socials, ...(data?.socials || {}) },
-  hours: Array.isArray(data?.hours) && data.hours.length === 7 ? data.hours : SEED_CONFIG.hours,
-})
+// Mezcla profunda: los objetos se combinan clave a clave, los arreglos se reemplazan enteros.
+// Así, campos nuevos agregados a SEED_CONFIG aparecen solos aunque la base de datos tenga datos viejos.
+const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v)
+function deepMerge(base, over) {
+  if (!isObj(over)) return base
+  const out = { ...base }
+  for (const [k, v] of Object.entries(over)) {
+    if (v === undefined || v === null) continue
+    out[k] = isObj(base?.[k]) && isObj(v) ? deepMerge(base[k], v) : v
+  }
+  return out
+}
+
+const withConfigDefaults = (data) => {
+  const c = deepMerge(SEED_CONFIG, data || {})
+  if (!Array.isArray(c.hours) || c.hours.length !== 7) c.hours = SEED_CONFIG.hours
+  if (!Array.isArray(c.process.steps) || !c.process.steps.length) c.process.steps = SEED_CONFIG.process.steps
+  if (!Array.isArray(c.cart.quick_notes)) c.cart.quick_notes = SEED_CONFIG.cart.quick_notes
+  return c
+}
 
 // ---------- Local ----------
 function readLS(key, fallback) {
@@ -88,7 +102,7 @@ export async function getConfig() {
 }
 
 export async function updateConfig(patch) {
-  const next = withConfigDefaults({ ...(await getConfig()), ...patch })
+  const next = withConfigDefaults(deepMerge(await getConfig(), patch))
   if (!isRemote) {
     writeLS(LS.config, next)
     return next

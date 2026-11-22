@@ -1,4 +1,5 @@
 import { STATUSES } from '../data/seed'
+import { useStore } from '../context/StoreContext'
 
 const STYLES = {
   open: { dot: 'bg-emerald-400', ring: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200', pulse: true },
@@ -7,12 +8,16 @@ const STYLES = {
   closed: { dot: 'bg-ash', ring: 'border-cream/20 bg-cream/5 text-ash', pulse: false },
 }
 
-export function statusInfo(id) {
-  return STATUSES.find((s) => s.id === id) || STATUSES[0]
+// Textos del estado: los del admin (config.status_texts) o los de fábrica.
+export function statusInfo(id, config) {
+  const base = STATUSES.find((s) => s.id === id) || STATUSES[0]
+  const custom = config?.status_texts?.[base.id] || {}
+  return { ...base, label: custom.label || base.label, hint: custom.hint ?? base.hint }
 }
 
 export default function StatusBadge({ status, showHint = true, className = '' }) {
-  const s = statusInfo(status)
+  const { config } = useStore()
+  const s = statusInfo(status, config)
   const st = STYLES[s.id] || STYLES.open
   return (
     <span
@@ -21,13 +26,11 @@ export default function StatusBadge({ status, showHint = true, className = '' })
       aria-live="polite"
     >
       <span className="relative flex size-2.5">
-        {st.pulse && (
-          <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-70 ${st.dot}`} />
-        )}
+        {st.pulse && <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-70 ${st.dot}`} />}
         <span className={`relative inline-flex size-2.5 rounded-full ${st.dot}`} />
       </span>
       <span>{s.label}</span>
-      {showHint && (
+      {showHint && s.hint && (
         <span className="hidden border-l border-current/25 pl-2.5 opacity-75 sm:inline">{s.hint}</span>
       )}
     </span>

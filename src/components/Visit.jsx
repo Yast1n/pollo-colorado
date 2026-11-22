@@ -9,6 +9,7 @@ import { IconClock, IconPin, IconWhatsApp } from './Icons'
 
 export default function Visit() {
   const { config } = useStore()
+  const v = config.visit || {}
   const root = useRef(null)
   const rows = groupHours(config.hours)
   const today = DAYS[new Date().getDay()]
@@ -41,16 +42,16 @@ export default function Visit() {
         aria-hidden="true"
         className="display pointer-events-none absolute top-6 left-0 text-[clamp(8rem,28vw,24rem)] whitespace-nowrap text-transparent select-none [-webkit-text-stroke:2px_rgb(194_65_12/0.18)]"
       >
-        Pirque Pirque
+        {v.big_word} {v.big_word}
       </p>
 
       <div className="wrap relative grid gap-12 pt-[clamp(4rem,14vw,12rem)] lg:grid-cols-12">
         <div className="lg:col-span-5">
           <h2 id="visit-title" className="display text-[clamp(3rem,7.5vw,6rem)]">
-            Horarios y ubicación
+            {v.title}
           </h2>
           <p className="mt-5 max-w-md text-lg text-ink-soft">
-            Retira en el local o pide delivery. {config.delivery_note}
+            {v.intro} {config.delivery_note}
           </p>
           <div className="mt-6 inline-flex rounded-full bg-carbon">
             <StatusBadge status={config.status} showHint={false} />
@@ -60,7 +61,7 @@ export default function Visit() {
         <div className="grid gap-5 sm:grid-cols-2 lg:col-span-7">
           <div className="rounded-3xl bg-white p-6 sm:p-7">
             <h3 className="flex items-center gap-2 font-display text-3xl font-extrabold">
-              <IconClock className="text-ember" /> Horarios
+              <IconClock className="text-ember" /> {v.hours_title}
             </h3>
             <dl className="mt-5 divide-y divide-carbon/10">
               {rows.map((r) => {
@@ -80,16 +81,16 @@ export default function Visit() {
 
           <div className="flex flex-col rounded-3xl bg-carbon p-6 text-cream sm:p-7">
             <h3 className="flex items-center gap-2 font-display text-3xl font-extrabold">
-              <IconPin className="text-gold" /> Dónde estamos
+              <IconPin className="text-gold" /> {v.where_title}
             </h3>
             <p className="mt-5 text-xl font-semibold">{config.address}</p>
-            <p className="mt-2 flex-1 text-ash">Busca el humo de las brasas. Te guiamos por WhatsApp si te pierdes.</p>
+            <p className="mt-2 flex-1 text-ash">{v.where_text}</p>
             <div className="mt-6 grid gap-2.5">
               <a href={maps.google} target="_blank" rel="noopener noreferrer" className="btn btn-ember">
-                Abrir en Google Maps
+                {v.btn_maps}
               </a>
               <a href={maps.waze} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-                Abrir en Waze
+                {v.btn_waze}
               </a>
               <a
                 href={whatsappLink(config.whatsapp, config.greeting)}
@@ -97,7 +98,7 @@ export default function Visit() {
                 rel="noopener noreferrer"
                 className="btn btn-ghost"
               >
-                <IconWhatsApp className="text-[#25D366]" /> Preguntar por WhatsApp
+                <IconWhatsApp className="text-[#25D366]" /> {v.btn_whatsapp}
               </a>
             </div>
           </div>

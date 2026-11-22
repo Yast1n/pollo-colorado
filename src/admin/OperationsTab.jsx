@@ -28,7 +28,7 @@ export default function OperationsTab() {
     setStatus(id) // optimista: 1 clic
     try {
       await store.updateConfig({ status: id })
-      toast(`Estado: ${STATUSES.find((s) => s.id === id).label}`)
+      toast(`Estado: ${config.status_texts?.[id]?.label || STATUSES.find((s) => s.id === id).label}`)
       reload()
     } catch (e) {
       setStatus(prev)
@@ -66,9 +66,9 @@ export default function OperationsTab() {
               className={`flex min-h-20 flex-col items-start justify-center gap-1 rounded-2xl border-2 border-cream/10 p-4 text-left transition-colors active:scale-[0.98] ${STATUS_STYLE[s.id]}`}
             >
               <span className="flex items-center gap-2 font-semibold">
-                <span className={`size-2.5 rounded-full ${DOT[s.id]}`} /> {s.label}
+                <span className={`size-2.5 rounded-full ${DOT[s.id]}`} /> {config.status_texts?.[s.id]?.label || s.label}
               </span>
-              <span className="text-xs text-ash">{s.hint}</span>
+              <span className="text-xs text-ash">{config.status_texts?.[s.id]?.hint ?? s.hint}</span>
             </button>
           ))}
         </div>

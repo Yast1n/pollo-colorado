@@ -34,7 +34,9 @@ export default function BusinessTab() {
     }
     setSaving(true)
     try {
-      await store.updateConfig({ ...c, whatsapp: phone })
+      // Solo los campos de esta pestaña (no pisa el estado ni los textos editados en otra).
+      const { greeting, address, maps_query, delivery_note, hours, socials } = c
+      await store.updateConfig({ whatsapp: phone, greeting, address, maps_query, delivery_note, hours, socials })
       toast('Datos del negocio guardados')
       reload()
     } catch (err) {
@@ -71,13 +73,6 @@ export default function BusinessTab() {
             </a>
           </div>
           {field('b-greet', 'Mensaje de saludo', 'greeting', { wide: true, area: true })}
-        </div>
-      </Card>
-
-      <Card title="Portada" description="Lo primero que ve el cliente.">
-        <div className="grid gap-4 sm:grid-cols-2">
-          {field('b-ht', 'Título grande', 'hero_title', { wide: true, hint: 'Las dos últimas palabras se pintan en color brasa.' })}
-          {field('b-hs', 'Bajada', 'hero_subtitle', { wide: true, area: true })}
         </div>
       </Card>
 

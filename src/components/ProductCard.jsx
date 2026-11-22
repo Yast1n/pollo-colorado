@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useCart } from '../context/CartContext'
+import { useStore } from '../context/StoreContext'
 import { TAGS } from '../data/seed'
 import { gsap } from '../lib/gsap'
 import { assetUrl, formatCLP } from '../utils/format'
@@ -14,6 +15,9 @@ const TAG_STYLE = {
 
 export default function ProductCard({ product, hidden }) {
   const { add } = useCart()
+  const { config } = useStore()
+  const ms = config.menu_section || {}
+  const soldLabel = ms.soldout_label || 'Agotado'
   const btn = useRef(null)
   const soldOut = !product.available
   const tags = soldOut ? [] : product.tags
@@ -58,11 +62,11 @@ export default function ProductCard({ product, hidden }) {
         />
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
           {soldOut && (
-            <span className="rounded-full bg-carbon px-3 py-1 text-xs font-bold text-cream">Agotado</span>
+            <span className="rounded-full bg-carbon px-3 py-1 text-xs font-bold text-cream">{soldLabel}</span>
           )}
           {tags.map((t) => (
             <span key={t} className={`rounded-full px-3 py-1 text-xs font-bold ${TAG_STYLE[t] || 'bg-cream text-carbon'}`}>
-              {TAGS.find((x) => x.id === t)?.label || t}
+              {config.tag_labels?.[t] || TAGS.find((x) => x.id === t)?.label || t}
             </span>
           ))}
         </div>
@@ -99,10 +103,10 @@ export default function ProductCard({ product, hidden }) {
             aria-label={soldOut ? `${product.name} agotado` : `Agregar ${product.name} al pedido`}
           >
             {soldOut ? (
-              'Agotado'
+              soldLabel
             ) : (
               <>
-                <IconPlus width="18" height="18" /> Agregar
+                <IconPlus width="18" height="18" /> {ms.add_label || 'Agregar'}
               </>
             )}
           </button>

@@ -207,4 +207,98 @@ export const SEED_CONFIG = {
     { open: '12:00', close: '21:00', closed: false },
   ],
   socials: { instagram: '', facebook: '', tiktok: '' },
+
+  // ----- Textos y diseño (todo editable en /#/admin > Personalizar) -----
+  hero_accent_words: 2, // cuántas palabras del final del título van en color brasa
+  hero_cta_menu: 'Ver el menú',
+  hero_cta_whatsapp: 'Escribir por WhatsApp',
+  hero_image: 'images/productos/pollo-entero.svg',
+  hero_image_alt: 'Pollo entero dorado a las brasas',
+
+  brand: { name: 'Pollo', accent: 'Colorado', logo_url: '', show_name: true },
+  nav: { menu: 'Menú', secret: 'El secreto', visit: 'Horarios y ubicación', cart: 'Tu pedido' },
+  stamp: { enabled: true, ring_text: 'CALIBRADOS · A LAS BRASAS · PIRQUE ·', big: '2.4–2.5', unit: 'kg' },
+
+  menu_section: {
+    title: 'La carta',
+    subtitle: 'Arma tu pedido aquí y lo confirmamos contigo por WhatsApp. Precios en pesos chilenos.',
+    all_label: 'Todo',
+    empty_text: 'Todavía no hay productos en esta categoría. Prueba con otra o escríbenos por WhatsApp.',
+    add_label: 'Agregar',
+    soldout_label: 'Agotado',
+  },
+  category_labels: {
+    pollos: 'Pollos a las Brasas',
+    combos: 'Combos Familiares',
+    acompanamientos: 'Papas y Acompañamientos',
+    bebidas: 'Bebidas y Extras',
+  },
+  tag_labels: { 'mas-pedido': 'Más pedido', ultimas: 'Últimas unidades', nuevo: 'Nuevo', promo: 'Promo' },
+  status_texts: {
+    open: { label: 'Abierto ahora', hint: 'Pollos saliendo de las brasas' },
+    scheduling: { label: 'Agendando pedidos', hint: 'Reserva tu pollo para más tarde' },
+    soldout: { label: 'Agotado por hoy', hint: 'Vuelve mañana temprano' },
+    closed: { label: 'Cerrado', hint: 'Revisa nuestros horarios' },
+  },
+
+  process: {
+    title: 'El secreto de nuestras',
+    accent: 'brasas',
+    steps: [
+      {
+        title: 'Adobo la noche anterior',
+        text: 'Ajo, comino, merkén suave y sal de mar. Cada pollo reposa en frío toda la noche para que el sabor llegue al hueso.',
+        image: 'images/productos/cuarto-pollo.svg',
+      },
+      {
+        title: 'Calibre parejo de 2.4 a 2.5 kg',
+        text: 'Elegimos pollos del mismo tamaño para que todos se cocinen igual: jugosos por dentro y sin partes secas.',
+        image: 'images/productos/medio-pollo.svg',
+      },
+      {
+        title: 'Carbón, nunca gas',
+        text: 'Brasa de carbón vegetal y fuego lento. El pollo gira hasta que la grasa se funde y la piel se vuelve crocante.',
+        image: 'images/productos/pollo-entero.svg',
+      },
+      {
+        title: 'Sale solo cuando está dorado',
+        text: 'Lo sacamos cuando la piel cruje y el jugo corre claro. Si todavía no está listo, espera un poco más en las brasas.',
+        image: 'images/productos/combo-familiar.svg',
+      },
+    ],
+  },
+
+  visit: {
+    title: 'Horarios y ubicación',
+    intro: 'Retira en el local o pide delivery.',
+    big_word: 'Pirque',
+    hours_title: 'Horarios',
+    where_title: 'Dónde estamos',
+    where_text: 'Busca el humo de las brasas. Te guiamos por WhatsApp si te pierdes.',
+    btn_maps: 'Abrir en Google Maps',
+    btn_waze: 'Abrir en Waze',
+    btn_whatsapp: 'Preguntar por WhatsApp',
+  },
+
+  cart: {
+    title: 'Tu pedido',
+    empty_title: 'Tu pedido está vacío',
+    empty_text: 'Elige algo de la carta para empezar.',
+    send_label: 'Consultar y Pedir por WhatsApp',
+    quick_notes: ['Sin ají', 'Bien dorado', 'Papas sin sal', 'Cortado en presas'],
+    closing_pickup: '¿Me confirman disponibilidad para esa hora? ¡Gracias!',
+    closing_delivery: '¿Tienen disponibilidad y cuánto sería el envío? ¡Gracias!',
+  },
+
+  footer: {
+    tagline: 'Pollos asados a las brasas en Pirque.',
+    copyright: 'Pollo Colorado. Imágenes ilustrativas; los productos pueden variar.',
+    admin_label: 'Acceso dueños',
+  },
+
+  seo: {
+    title: 'Pollo Colorado · Pollos asados a las brasas en Pirque',
+    description:
+      'Pollos asados a las brasas en Pirque, calibrados 2.4 – 2.5 kg. Combos familiares, papas fritas caseras y agregados. Arma tu pedido y consúltalo por WhatsApp.',
+  },
 }

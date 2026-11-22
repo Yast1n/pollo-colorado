@@ -8,7 +8,6 @@ import { buildOrderMessage, whatsappLink } from '../utils/whatsapp'
 import { statusInfo } from './StatusBadge'
 import { IconClose, IconMinus, IconPlus, IconWhatsApp, IconBag } from './Icons'
 
-const QUICK_NOTES = ['Sin ají', 'Bien dorado', 'Papas sin sal', 'Cortado en presas']
 const FORM_KEY = 'pc:order-form:v1'
 
 export default function CartDrawer() {
@@ -32,7 +31,9 @@ export default function CartDrawer() {
   const available = items.filter((i) => i.available)
   const soldOutItems = items.filter((i) => !i.available)
   const availTotal = available.reduce((s, i) => s + i.qty * i.price, 0)
-  const status = statusInfo(config.status)
+  const status = statusInfo(config.status, config)
+  const ct = config.cart || {}
+  const QUICK_NOTES = (ct.quick_notes || []).filter((n) => n?.trim())
   const addressMissing = form.mode === 'delivery' && !form.address.trim()
 
   useEffect(() => {
@@ -144,7 +145,7 @@ export default function CartDrawer() {
         className="absolute inset-x-0 bottom-0 flex max-h-[92dvh] flex-col rounded-t-[2rem] bg-cream text-carbon shadow-2xl md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[30rem] md:rounded-t-none md:rounded-l-[2rem]"
       >
         <div className="flex items-center justify-between border-b border-carbon/10 px-6 py-5">
-          <h2 id="cart-title" className="display text-4xl">Tu pedido</h2>
+          <h2 id="cart-title" className="display text-4xl">{ct.title}</h2>
           <button
             ref={closeBtn}
             type="button"
@@ -160,10 +161,10 @@ export default function CartDrawer() {
           {items.length === 0 ? (
             <div className="grid place-items-center py-16 text-center">
               <IconBag width="40" height="40" className="text-ember" />
-              <p className="mt-4 text-xl font-semibold">Tu pedido está vacío</p>
-              <p className="mt-1 text-ink-soft">Elige algo de la carta para empezar.</p>
+              <p className="mt-4 text-xl font-semibold">{ct.empty_title}</p>
+              <p className="mt-1 text-ink-soft">{ct.empty_text}</p>
               <a href="#menu" onClick={() => setOpen(false)} className="btn btn-dark mt-6">
-                Ver la carta
+                {config.hero_cta_menu || 'Ver la carta'}
               </a>
             </div>
           ) : (
@@ -335,7 +336,7 @@ export default function CartDrawer() {
               aria-disabled={addressMissing || !available.length}
               className="btn mt-4 w-full bg-[#25D366] text-base text-carbon hover:bg-[#1ebe5a]"
             >
-              <IconWhatsApp /> Consultar y Pedir por WhatsApp
+              <IconWhatsApp /> {ct.send_label || 'Pedir por WhatsApp'}
             </a>
             <button type="button" onClick={clear} className="mt-2 w-full py-2 text-sm text-ink-soft underline-offset-4 hover:underline">
               Vaciar pedido

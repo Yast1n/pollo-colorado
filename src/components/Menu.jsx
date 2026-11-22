@@ -7,14 +7,19 @@ import ProductCard from './ProductCard'
 const reduceMotion = () => window.matchMedia(MQ.reduce).matches
 
 export default function Menu() {
-  const { products, loading, error } = useStore()
+  const { products, loading, error, config } = useStore()
+  const ms = config.menu_section || {}
+  const catLabel = (c) => config.category_labels?.[c.id] || c.label
   const [active, setActive] = useState('all')
   const root = useRef(null)
   const grid = useRef(null)
   const flipState = useRef(null)
 
   const counts = Object.fromEntries(CATEGORIES.map((c) => [c.id, products.filter((p) => p.category === c.id).length]))
-  const filters = [{ id: 'all', label: 'Todo', n: products.length }, ...CATEGORIES.map((c) => ({ ...c, n: counts[c.id] }))]
+  const filters = [
+    { id: 'all', label: ms.all_label || 'Todo', n: products.length },
+    ...CATEGORIES.map((c) => ({ ...c, label: catLabel(c), n: counts[c.id] })),
+  ]
 
   // Revelado escalonado de las tarjetas la primera vez que entran en pantalla.
   useGSAP(
@@ -75,11 +80,9 @@ export default function Menu() {
         <div data-menu-head className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 id="menu-title" className="display text-[clamp(3.2rem,9vw,7rem)]">
-              La carta
+              {ms.title}
             </h2>
-            <p className="mt-4 max-w-md text-lg text-ink-soft">
-              Arma tu pedido aquí y lo confirmamos contigo por WhatsApp. Precios en pesos chilenos.
-            </p>
+            {ms.subtitle && <p className="mt-4 max-w-md text-lg text-ink-soft">{ms.subtitle}</p>}
           </div>
         </div>
 
@@ -130,9 +133,7 @@ export default function Menu() {
         )}
 
         {!loading && !anyVisible && (
-          <p className="mt-10 text-lg text-ink-soft">
-            Todavía no hay productos en esta categoría. Prueba con otra o escríbenos por WhatsApp.
-          </p>
+          <p className="mt-10 text-lg text-ink-soft">{ms.empty_text}</p>
         )}
       </div>
     </section>

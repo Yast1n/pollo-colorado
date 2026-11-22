@@ -147,7 +147,13 @@ supabase/migrations/20261122000000_init.sql          SQL completo listo para peg
 - **Panel:** https://yast1n.github.io/pollo-colorado/#/admin
 - **Supabase:** proyecto `pollo-colorado` (región São Paulo). Las credenciales están en `../PolloColorado-CREDENCIALES.txt`, que no está en el repo.
 
-**Cambios de contenido** (menú, precios, fotos, estado, horarios): se hacen desde el panel admin. No requieren deploy y se ven en vivo.
+**Cambios de contenido**: se hacen desde el panel admin, no requieren deploy y se ven en vivo.
+- *Operación del día*: estado del local y aviso superior.
+- *Menú*: productos, precios, fotos y stock.
+- *Mi negocio*: WhatsApp, dirección, horarios y redes.
+- *Personalizar*: **todos los textos del sitio**, que son marca y logo, navbar, portada (título, botones e imagen), sello giratorio, carta (categorías y etiquetas), estados, pasos de "El secreto" (agregar, quitar, reordenar y cambiar imagen), horarios y ubicación, carrito y cierre del mensaje de WhatsApp, footer y SEO.
+
+Los textos viven en `site_config.data` (JSON). Si agregas un campo nuevo a `SEED_CONFIG` en `src/data/seed.js`, aparece solo con su valor por defecto y no hace falta migración.
 
 **Cambios de código o diseño:**
 ```bash

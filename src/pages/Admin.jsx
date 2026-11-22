@@ -6,6 +6,7 @@ import { Logo } from '../components/Header'
 import OperationsTab from '../admin/OperationsTab'
 import MenuTab from '../admin/MenuTab'
 import BusinessTab from '../admin/BusinessTab'
+import CustomizeTab from '../admin/CustomizeTab'
 import { ToastProvider } from '../admin/Toast'
 
 function DemoNotice() {
@@ -93,6 +94,7 @@ const TABS = [
   { id: 'ops', label: 'Operación del día' },
   { id: 'menu', label: 'Menú' },
   { id: 'business', label: 'Mi negocio' },
+  { id: 'customize', label: 'Personalizar' },
 ]
 
 function Dashboard({ session, onLogout }) {
@@ -134,6 +136,7 @@ function Dashboard({ session, onLogout }) {
             {tab === 'ops' && <OperationsTab />}
             {tab === 'menu' && <MenuTab />}
             {tab === 'business' && <BusinessTab />}
+            {tab === 'customize' && <CustomizeTab />}
           </>
         )}
       </main>
