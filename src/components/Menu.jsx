@@ -24,6 +24,7 @@ export default function Menu() {
   const stickyBar = useRef(null)
   const listStart = useRef(null)
   const flipState = useRef(null)
+  const flipAnim = useRef(null)
   const placed = useRef(false)
 
   const counts = Object.fromEntries(CATEGORIES.map((c) => [c.id, products.filter((p) => p.category === c.id).length]))
@@ -127,8 +128,18 @@ export default function Menu() {
 
   const choose = (id) => {
     if (id === active) return
+    // Clic rápido: termina la transición anterior antes de medir, o se miden posiciones a medio camino.
+    flipAnim.current?.progress(1)
     scrollToList()
-    if (!reduceMotion()) flipState.current = Flip.getState(root.current.querySelectorAll('[data-card]'), { props: 'opacity' })
+    if (!reduceMotion()) {
+      const cards = root.current.querySelectorAll('[data-card]')
+      // Endereza el tilt del mouse antes de medir para que Flip no capture tarjetas inclinadas.
+      // También corta entradas/salidas pendientes del cambio anterior (dejarían tarjetas transparentes).
+      gsap.killTweensOf(cards, 'rotationX,rotationY,opacity,scale')
+      gsap.set(cards, { rotationX: 0, rotationY: 0, scale: 1 })
+      gsap.set([...cards].filter((c) => !c.classList.contains('hidden')), { opacity: 1 })
+      flipState.current = Flip.getState(cards, { props: 'opacity' })
+    }
     setActive(id)
   }
 
@@ -137,8 +148,19 @@ export default function Menu() {
     const state = flipState.current
     if (!state) return
     flipState.current = null
-    Flip.from(state, {
-      targets: root.current.querySelectorAll('[data-card]'),
+    const targets = root.current.querySelectorAll('[data-card]')
+    root.current.dataset.flipping = ''
+    // Al terminar (o al cortarla otro clic) cada tarjeta vuelve a su sitio exacto en la grilla:
+    // sin esto, el tilt podía reescribir un desplazamiento viejo y dejar tarjetas encimadas.
+    const settle = () => {
+      gsap.set(targets, { x: 0, y: 0, xPercent: 0, yPercent: 0, scale: 1, rotationX: 0, rotationY: 0 })
+      gsap.set([...targets].filter((c) => !c.classList.contains('hidden')), { opacity: 1 })
+      delete root.current?.dataset.flipping
+      flipAnim.current = null
+      ScrollTrigger.refresh()
+    }
+    flipAnim.current = Flip.from(state, {
+      targets,
       duration: 0.65,
       ease: 'power3.inOut',
       scale: true,
@@ -147,7 +169,8 @@ export default function Menu() {
       onEnter: (els) =>
         gsap.fromTo(els, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, y: 0, clipPath: 'none', duration: 0.5, delay: 0.2 }),
       onLeave: (els) => gsap.to(els, { opacity: 0, scale: 0.92, duration: 0.3 }),
-      onComplete: () => ScrollTrigger.refresh(),
+      onComplete: settle,
+      onInterrupt: settle,
     })
   }, [active])
 

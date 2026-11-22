@@ -56,6 +56,8 @@ export default function ProductCard({ product, hidden, variant = 'standard', blo
     const rx = gsap.quickTo(el, 'rotationX', { duration: 0.5, ease: 'power3.out' })
     const ry = gsap.quickTo(el, 'rotationY', { duration: 0.5, ease: 'power3.out' })
     const move = (e) => {
+      // Mientras el menú reacomoda tarjetas (cambio de filtro) no se inclina: chocaría con Flip.
+      if (el.closest('[data-flipping]')) return
       const r = el.getBoundingClientRect()
       const px = (e.clientX - r.left) / r.width
       const py = (e.clientY - r.top) / r.height
