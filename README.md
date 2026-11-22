@@ -138,3 +138,28 @@ supabase/migrations/20261122000000_init.sql          SQL completo listo para peg
 - **"El secreto de nuestras brasas":** en escritorio, la sección queda fija y el scroll llena un medidor de calor y avanza los 4 pasos, con snap entre ellos. En móvil se muestra como una lista.
 - **Microinteracciones:** el botón "Agregar" late y muestra un "+1", el contador del carrito hace "pop" y los botones se hunden al presionarlos.
 - **`prefers-reduced-motion`:** todo queda estático y visible, y el proceso se muestra como lista.
+
+---
+
+## 8. Publicado y cómo actualizar
+
+- **Sitio:** https://yast1n.github.io/pollo-colorado/
+- **Panel:** https://yast1n.github.io/pollo-colorado/#/admin
+- **Supabase:** proyecto `pollo-colorado` (región São Paulo). Las credenciales están en `../PolloColorado-CREDENCIALES.txt`, que no está en el repo.
+
+**Cambios de contenido** (menú, precios, fotos, estado, horarios): se hacen desde el panel admin. No requieren deploy y se ven en vivo.
+
+**Cambios de código o diseño:**
+```bash
+npm run dev                 # probar en local (usa el .env conectado a Supabase)
+git add -A && git commit -m "describe el cambio"
+git push                    # GitHub Actions compila y publica en ~1 minuto
+```
+
+**Cambios en la base de datos** (columnas o tablas nuevas):
+```bash
+npx supabase migration new nombre_del_cambio   # crea supabase/migrations/<fecha>_nombre_del_cambio.sql
+# escribe el SQL en ese archivo y luego:
+npx supabase db push --remote
+```
+Nunca edites una migración que ya se aplicó: crea siempre una nueva.
