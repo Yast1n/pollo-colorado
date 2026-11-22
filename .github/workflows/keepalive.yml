@@ -1,0 +1,35 @@
+name: Mantener Supabase activo
+
+# Supabase (plan gratis) pausa proyectos tras ~7 días sin actividad.
+# Esta tarea hace una lectura pública cada 3 días para evitarlo.
+on:
+  schedule:
+    - cron: '17 12 */3 * *' # cada 3 días, 12:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Consultar la base de datos
+        env:
+          URL: ${{ secrets.VITE_SUPABASE_URL }}
+          KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "Faltan los secretos VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY"; exit 1
+          fi
+          for i in 1 2 3; do
+            code=$(curl -s -o /tmp/r.json -w "%{http_code}" \
+              "$URL/rest/v1/site_config?select=id&limit=1" \
+              -H "apikey: $KEY")
+            echo "Intento $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          echo "Supabase no respondió 200. Revisa si el proyecto está pausado en el dashboard."
+          exit 1
