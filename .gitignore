@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.env.local
+*.log
+.DS_Store
+.taste-skill
+shots
+supabase/.temp
+supabase/.branches

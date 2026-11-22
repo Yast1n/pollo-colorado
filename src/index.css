@@ -1,0 +1,149 @@
+@import 'tailwindcss';
+
+/* Tokens de Pollo Colorado */
+@theme {
+  --color-carbon: #120f0d;
+  --color-carbon-2: #1c1714;
+  --color-carbon-3: #2a221d;
+  --color-ash: #b8aca2; /* texto secundario sobre carbón (contraste ~8:1) */
+  --color-ember: #ea580c;
+  --color-ember-deep: #c2410c;
+  --color-gold: #f59e0b;
+  --color-cream: #faf5ee;
+  --color-cream-2: #f1e8dc;
+  --color-ink-soft: #5b4d43; /* texto secundario sobre crema (contraste ~7.6:1) */
+
+  --font-display: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-carbon font-sans text-cream antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: clip;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-ember);
+    color: var(--color-cream);
+  }
+  button,
+  [role='button'] {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* evita el zoom de iOS al enfocar */
+  }
+}
+
+@layer components {
+  .display {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 82rem;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  /* Botones: presionan al hacer clic (feedback táctil) */
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold;
+    transition:
+      transform 160ms var(--ease-out-quart),
+      background-color 200ms,
+      color 200ms,
+      box-shadow 200ms;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn-ember {
+    @apply bg-ember text-carbon;
+    box-shadow: 0 0 0 0 rgb(234 88 12 / 0);
+  }
+  @media (hover: hover) {
+    .btn-ember:hover {
+      @apply bg-gold;
+      box-shadow: 0 10px 40px -10px rgb(245 158 11 / 0.6);
+    }
+    .btn-ghost:hover {
+      @apply bg-cream text-carbon;
+    }
+    .btn-dark:hover {
+      @apply bg-ember-deep;
+    }
+  }
+  .btn-ghost {
+    @apply border border-cream/30 text-cream;
+  }
+  .btn-dark {
+    @apply bg-carbon text-cream;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-carbon/15 bg-white px-4 py-3 text-carbon placeholder:text-ink-soft/70;
+    transition: border-color 150ms, box-shadow 150ms;
+  }
+  .field:focus {
+    @apply border-ember outline-none;
+    box-shadow: 0 0 0 3px rgb(234 88 12 / 0.2);
+  }
+  .field-dark {
+    @apply w-full rounded-xl border border-cream/15 bg-carbon-2 px-4 py-3 text-cream placeholder:text-ash/60;
+    transition: border-color 150ms, box-shadow 150ms;
+  }
+  .field-dark:focus {
+    @apply border-gold outline-none;
+    box-shadow: 0 0 0 3px rgb(245 158 11 / 0.2);
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium;
+  }
+}
+
+/* Grano sutil sobre superficies oscuras (sin imágenes externas) */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

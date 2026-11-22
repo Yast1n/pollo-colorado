@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img">
+
+<defs>
+  <radialGradient id="bg" cx="50%" cy="78%" r="80%">
+    <stop offset="0" stop-color="#3a1a0c"/>
+    <stop offset=".45" stop-color="#1c1410"/>
+    <stop offset="1" stop-color="#120F0D"/>
+  </radialGradient>
+  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#EA580C" stop-opacity=".55"/>
+    <stop offset="1" stop-color="#EA580C" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F59E0B"/>
+    <stop offset=".55" stop-color="#C2410C"/>
+    <stop offset="1" stop-color="#7c2d12"/>
+  </linearGradient>
+  <linearGradient id="fry" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FCD34D"/>
+    <stop offset="1" stop-color="#D97706"/>
+  </linearGradient>
+  <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2a231e"/>
+    <stop offset="1" stop-color="#0d0b09"/>
+  </linearGradient>
+  <pattern id="grill" width="38" height="38" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+    <rect width="38" height="38" fill="none"/>
+    <rect y="16" width="38" height="5" fill="#000" opacity=".22"/>
+  </pattern>
+</defs>
+<rect width="800" height="600" fill="url(#bg)"/>
+<ellipse cx="400" cy="420" rx="360" ry="190" fill="url(#glow)"/>
+<circle cx="172" cy="60" r="2.6" fill="#EA580C" opacity="0.49"/><circle cx="134" cy="218" r="2.1" fill="#EA580C" opacity="0.70"/><circle cx="367" cy="304" r="1.9" fill="#F59E0B" opacity="0.68"/><circle cx="495" cy="148" r="1.9" fill="#EA580C" opacity="0.78"/><circle cx="116" cy="83" r="1.5" fill="#EA580C" opacity="0.27"/><circle cx="468" cy="205" r="2.0" fill="#F59E0B" opacity="0.79"/><circle cx="419" cy="199" r="1.3" fill="#F59E0B" opacity="0.65"/><circle cx="399" cy="359" r="2.8" fill="#EA580C" opacity="0.83"/><circle cx="662" cy="197" r="2.3" fill="#F59E0B" opacity="0.72"/><circle cx="682" cy="240" r="3.6" fill="#F59E0B" opacity="0.75"/><circle cx="359" cy="85" r="3.5" fill="#F59E0B" opacity="0.64"/><circle cx="326" cy="308" r="3.0" fill="#F59E0B" opacity="0.52"/><circle cx="660" cy="298" r="1.1" fill="#EA580C" opacity="0.53"/><circle cx="734" cy="277" r="1.4" fill="#F59E0B" opacity="0.35"/><circle cx="196" cy="234" r="1.8" fill="#EA580C" opacity="0.83"/><circle cx="410" cy="72" r="2.0" fill="#EA580C" opacity="0.64"/><circle cx="218" cy="304" r="1.8" fill="#F59E0B" opacity="0.61"/><circle cx="329" cy="334" r="1.5" fill="#EA580C" opacity="0.50"/><circle cx="668" cy="248" r="1.2" fill="#EA580C" opacity="0.54"/><circle cx="230" cy="193" r="2.3" fill="#EA580C" opacity="0.27"/><circle cx="101" cy="305" r="2.2" fill="#F59E0B" opacity="0.79"/><circle cx="131" cy="194" r="1.6" fill="#EA580C" opacity="0.27"/><circle cx="147" cy="300" r="3.2" fill="#EA580C" opacity="0.57"/><circle cx="250" cy="174" r="1.6" fill="#F59E0B" opacity="0.55"/><circle cx="216" cy="267" r="3.3" fill="#F59E0B" opacity="0.48"/><circle cx="703" cy="325" r="2.1" fill="#EA580C" opacity="0.38"/>
+<ellipse cx="400" cy="470" rx="290" ry="54" fill="url(#plate)"/>
+<ellipse cx="400" cy="462" rx="290" ry="50" fill="none" stroke="#F59E0B" stroke-opacity=".18" stroke-width="2"/>
+
+<g transform="translate(420 405) scale(1.15)">
+  <ellipse cx="0" cy="34" rx="170" ry="20" fill="#000" opacity=".35"/>
+  <path d="M-150 30 C-160 -60 -80 -130 10 -128 C 70 -126 110 -90 120 -40 L 120 30 Z" fill="url(#skin)"/>
+  <path d="M-150 30 C-160 -60 -80 -130 10 -128 C 70 -126 110 -90 120 -40 L 120 30 Z" fill="url(#grill)"/>
+  <path d="M120 -40 L120 30" stroke="#FDE68A" stroke-opacity=".5" stroke-width="6"/>
+  <path d="M-100 -70 C -50 -110 20 -112 70 -88" fill="none" stroke="#FDE68A" stroke-opacity=".55" stroke-width="9" stroke-linecap="round"/>
+  <path d="M-130 0 C -186 -14 -222 8 -232 -28 C -240 -58 -206 -68 -192 -44 C -178 -20 -150 -30 -128 -24 Z" fill="url(#skin)"/>
+  <circle cx="-234" cy="-39" r="16" fill="#FAF5EE"/><circle cx="-214" cy="-56" r="13" fill="#FAF5EE"/>
+</g>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img">
+
+<defs>
+  <radialGradient id="bg" cx="50%" cy="78%" r="80%">
+    <stop offset="0" stop-color="#3a1a0c"/>
+    <stop offset=".45" stop-color="#1c1410"/>
+    <stop offset="1" stop-color="#120F0D"/>
+  </radialGradient>
+  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#EA580C" stop-opacity=".55"/>
+    <stop offset="1" stop-color="#EA580C" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F59E0B"/>
+    <stop offset=".55" stop-color="#C2410C"/>
+    <stop offset="1" stop-color="#7c2d12"/>
+  </linearGradient>
+  <linearGradient id="fry" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FCD34D"/>
+    <stop offset="1" stop-color="#D97706"/>
+  </linearGradient>
+  <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2a231e"/>
+    <stop offset="1" stop-color="#0d0b09"/>
+  </linearGradient>
+  <pattern id="grill" width="38" height="38" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+    <rect width="38" height="38" fill="none"/>
+    <rect y="16" width="38" height="5" fill="#000" opacity=".22"/>
+  </pattern>
+</defs>
+<rect width="800" height="600" fill="url(#bg)"/>
+<ellipse cx="400" cy="420" rx="360" ry="190" fill="url(#glow)"/>
+<circle cx="393" cy="245" r="1.3" fill="#EA580C" opacity="0.52"/><circle cx="404" cy="86" r="3.3" fill="#F59E0B" opacity="0.50"/><circle cx="253" cy="318" r="2.7" fill="#EA580C" opacity="0.55"/><circle cx="220" cy="282" r="1.4" fill="#F59E0B" opacity="0.54"/><circle cx="180" cy="77" r="3.4" fill="#F59E0B" opacity="0.32"/><circle cx="362" cy="375" r="1.5" fill="#EA580C" opacity="0.58"/><circle cx="517" cy="153" r="1.4" fill="#F59E0B" opacity="0.52"/><circle cx="218" cy="241" r="1.9" fill="#EA580C" opacity="0.71"/><circle cx="299" cy="176" r="1.2" fill="#F59E0B" opacity="0.39"/><circle cx="661" cy="215" r="1.6" fill="#F59E0B" opacity="0.49"/><circle cx="576" cy="275" r="1.4" fill="#EA580C" opacity="0.52"/><circle cx="121" cy="76" r="2.1" fill="#F59E0B" opacity="0.64"/><circle cx="710" cy="167" r="2.1" fill="#EA580C" opacity="0.51"/><circle cx="630" cy="209" r="2.1" fill="#EA580C" opacity="0.39"/><circle cx="565" cy="104" r="1.7" fill="#F59E0B" opacity="0.77"/><circle cx="718" cy="366" r="3.2" fill="#F59E0B" opacity="0.63"/><circle cx="437" cy="68" r="1.8" fill="#EA580C" opacity="0.38"/><circle cx="328" cy="286" r="2.9" fill="#EA580C" opacity="0.82"/><circle cx="65" cy="179" r="2.5" fill="#EA580C" opacity="0.30"/><circle cx="734" cy="211" r="3.3" fill="#F59E0B" opacity="0.53"/><circle cx="145" cy="322" r="3.3" fill="#EA580C" opacity="0.26"/><circle cx="165" cy="293" r="2.8" fill="#F59E0B" opacity="0.77"/><circle cx="216" cy="334" r="1.4" fill="#EA580C" opacity="0.30"/><circle cx="74" cy="237" r="3.2" fill="#F59E0B" opacity="0.34"/><circle cx="396" cy="77" r="1.7" fill="#EA580C" opacity="0.29"/><circle cx="302" cy="136" r="1.8" fill="#F59E0B" opacity="0.33"/>
+<ellipse cx="400" cy="470" rx="290" ry="54" fill="url(#plate)"/>
+<ellipse cx="400" cy="462" rx="290" ry="50" fill="none" stroke="#F59E0B" stroke-opacity=".18" stroke-width="2"/>
+
+<g transform="translate(400 400) scale(1.15)">
+  <ellipse cx="0" cy="34" rx="190" ry="22" fill="#000" opacity=".35"/>
+  <path d="M-150 10 C-170 -70 -90 -140 0 -140 C 95 -140 175 -80 160 5 C 150 45 90 55 0 55 C -90 55 -142 45 -150 10 Z" fill="url(#skin)"/>
+  <path d="M-150 10 C-170 -70 -90 -140 0 -140 C 95 -140 175 -80 160 5 C 150 45 90 55 0 55 C -90 55 -142 45 -150 10 Z" fill="url(#grill)"/>
+  <path d="M-110 -70 C -60 -118 40 -122 95 -84" fill="none" stroke="#FDE68A" stroke-opacity=".55" stroke-width="10" stroke-linecap="round"/>
+  <path d="M120 -20 C 175 -40 220 -20 230 -55 C 240 -85 205 -95 192 -70 C 178 -45 150 -55 120 -45 Z" fill="url(#skin)"/>
+  <circle cx="232" cy="-66" r="17" fill="#FAF5EE"/><circle cx="214" cy="-82" r="14" fill="#FAF5EE"/>
+  <path d="M-120 -10 C -178 -24 -222 -2 -232 -38 C -240 -68 -206 -78 -192 -54 C -178 -30 -150 -40 -122 -34 Z" fill="url(#skin)"/>
+  <circle cx="-234" cy="-49" r="17" fill="#FAF5EE"/><circle cx="-214" cy="-66" r="14" fill="#FAF5EE"/>
+</g>
+</svg>
