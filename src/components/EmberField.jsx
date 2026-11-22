@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react'
 
 // Chispas de brasa que suben. Canvas 2D liviano: se pausa fuera de pantalla,
 // con la pestaña oculta y queda estático con prefers-reduced-motion.
-export default function EmberField({ className = '', density = 1 }) {
+// size/speed permiten capas con profundidad: fondo (chispas finas) y primer plano (grandes, desenfocadas).
+export default function EmberField({ className = '', density = 1, size = 1, speed = 1 }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -19,8 +20,8 @@ export default function EmberField({ className = '', density = 1 }) {
     const spawn = (anywhere) => ({
       x: Math.random() * w,
       y: anywhere ? Math.random() * h : h + 10,
-      r: 0.6 + Math.random() * 2.2,
-      vy: 0.25 + Math.random() * 0.9,
+      r: (0.6 + Math.random() * 2.2) * size,
+      vy: (0.25 + Math.random() * 0.9) * speed,
       vx: (Math.random() - 0.5) * 0.3,
       sway: Math.random() * Math.PI * 2,
       life: 0.4 + Math.random() * 0.6,
@@ -92,7 +93,7 @@ export default function EmberField({ className = '', density = 1 }) {
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)
     }
-  }, [density])
+  }, [density, size, speed])
 
   return <canvas ref={ref} className={`pointer-events-none ${className}`} aria-hidden="true" />
 }

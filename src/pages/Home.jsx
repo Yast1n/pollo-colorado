@@ -7,6 +7,7 @@ import Header, { AnnouncementBar } from '../components/Header'
 import Hero from '../components/Hero'
 import Menu from '../components/Menu'
 import Process from '../components/Process'
+import Marquee from '../components/Marquee'
 import Visit from '../components/Visit'
 import Footer from '../components/Footer'
 import CartDrawer from '../components/CartDrawer'
@@ -64,6 +65,7 @@ export default function Home() {
       <main>
         <Hero />
         <Menu />
+        <Marquee />
         <Process />
         <Visit />
       </main>

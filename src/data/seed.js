@@ -212,8 +212,8 @@ export const SEED_CONFIG = {
   hero_accent_words: 2, // cuántas palabras del final del título van en color brasa
   hero_cta_menu: 'Ver el menú',
   hero_cta_whatsapp: 'Escribir por WhatsApp',
-  hero_image: 'images/productos/pollo-entero.svg',
-  hero_image_alt: 'Pollo entero dorado a las brasas',
+  hero_image: 'images/fotos/hero-pollo.jpg',
+  hero_image_alt: 'Pollo entero dorado girando en el asador',
 
   brand: { name: 'Pollo', accent: 'Colorado', logo_url: '', show_name: true },
   nav: { menu: 'Menú', secret: 'El secreto', visit: 'Horarios y ubicación', cart: 'Tu pedido' },
@@ -244,28 +244,36 @@ export const SEED_CONFIG = {
   process: {
     title: 'El secreto de nuestras',
     accent: 'brasas',
+    ambient_image: 'images/fotos/brasas-ambiente.jpg',
+    // stat: la cifra grande del paso; su primer número se anima como contador.
     steps: [
       {
-        title: 'Adobo la noche anterior',
-        text: 'Ajo, comino, merkén suave y sal de mar. Cada pollo reposa en frío toda la noche para que el sabor llegue al hueso.',
-        image: 'images/productos/cuarto-pollo.svg',
-      },
-      {
-        title: 'Calibre parejo de 2.4 a 2.5 kg',
+        title: 'Calibrado 2.4 – 2.5 kg',
         text: 'Elegimos pollos del mismo tamaño para que todos se cocinen igual: jugosos por dentro y sin partes secas.',
-        image: 'images/productos/medio-pollo.svg',
+        stat: '2.5 kg',
+        stat_label: 'por pollo, máximo',
+        image: 'images/fotos/paso-calibrado.jpg',
       },
       {
-        title: 'Carbón, nunca gas',
-        text: 'Brasa de carbón vegetal y fuego lento. El pollo gira hasta que la grasa se funde y la piel se vuelve crocante.',
-        image: 'images/productos/pollo-entero.svg',
+        title: 'Adobo nocturno',
+        text: 'Ajo, comino, merkén suave y sal de mar. Cada pollo reposa en frío toda la noche para que el sabor llegue al hueso.',
+        stat: '12 h',
+        stat_label: 'de reposo en adobo',
+        image: 'images/fotos/paso-adobo.jpg',
       },
       {
-        title: 'Sale solo cuando está dorado',
-        text: 'Lo sacamos cuando la piel cruje y el jugo corre claro. Si todavía no está listo, espera un poco más en las brasas.',
-        image: 'images/productos/combo-familiar.svg',
+        title: 'Brasas de carbón',
+        text: 'Carbón vegetal y fuego lento, nunca gas. Lo sacamos cuando la piel cruje y el jugo corre claro.',
+        stat: '100%',
+        stat_label: 'carbón vegetal',
+        image: 'images/fotos/paso-brasas.jpg',
       },
     ],
+  },
+
+  marquee: {
+    enabled: true,
+    text: 'BRASAS REALES • PIRQUE • 2.4 – 2.5 KG • DORADO CRUJIENTE •',
   },
 
   visit: {
@@ -294,6 +302,10 @@ export const SEED_CONFIG = {
     tagline: 'Pollos asados a las brasas en Pirque.',
     copyright: 'Pollo Colorado. Imágenes ilustrativas; los productos pueden variar.',
     admin_label: 'Acceso dueños',
+    // Las fotos de muestra son de Wikimedia Commons y su licencia exige este crédito.
+    // Al reemplazarlas por fotos propias, borra esta línea desde el panel.
+    credits:
+      'Fotos de muestra: Joe Schneid (CC BY 3.0), Gatorfan252525 (CC BY-SA 4.0), Dtarazona (CC BY-SA 3.0), Koutchika Lihouenou Gaspard (CC BY-SA 4.0), diddi4 (CC0), vía Wikimedia Commons.',
   },
 
   seo: {

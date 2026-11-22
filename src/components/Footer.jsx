@@ -34,6 +34,7 @@ export default function Footer() {
           © {new Date().getFullYear()} {f.copyright}
         </p>
       )}
+      {f.credits && <p className="wrap mt-3 text-xs text-ash/60">{f.credits}</p>}
     </footer>
   )
 }

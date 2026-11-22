@@ -269,6 +269,7 @@ export default function CustomizeTab() {
       <Section title="El secreto de nuestras brasas" description="Título y pasos del proceso (se animan con el scroll).">
         <Text label="Título" path="process.title" />
         <Text label="Palabra en color" path="process.accent" />
+        <ImageField label="Fondo de ambiente (brasas)" path="process.ambient_image" hint="Se ve tenue detrás de la escena y se ilumina con cada paso." />
         <div className="space-y-3 sm:col-span-2">
           {steps.map((s, i) => (
             <div key={i} className="rounded-2xl border border-cream/10 bg-carbon p-4">
@@ -290,16 +291,23 @@ export default function CustomizeTab() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <Text label="Título del paso" path={`process.steps.${i}.title`} wide />
                 <Text label="Texto" path={`process.steps.${i}.text`} area />
+                <Text label="Cifra grande" path={`process.steps.${i}.stat`} max={12} hint="Ej.: 2.5 kg, 12 h, 100%. El número se anima como contador." />
+                <Text label="Texto bajo la cifra" path={`process.steps.${i}.stat_label`} max={40} />
                 <ImageField label="Imagen" path={`process.steps.${i}.image`} />
               </div>
             </div>
           ))}
           {steps.length < 8 && (
-            <button type="button" onClick={() => setSteps([...steps, { title: 'Nuevo paso', text: '', image: '' }])} className="btn btn-ghost w-full">
+            <button type="button" onClick={() => setSteps([...steps, { title: 'Nuevo paso', text: '', image: '', stat: '', stat_label: '' }])} className="btn btn-ghost w-full">
               <IconPlus /> Agregar paso
             </button>
           )}
         </div>
+      </Section>
+
+      <Section title="Cinta en movimiento" description="La franja naranja con texto gigante entre la carta y El secreto.">
+        <Toggle label="Mostrar la cinta" path="marquee.enabled" wide />
+        <Text label="Texto (separa las frases con •)" path="marquee.text" wide max={160} hint="Ej.: BRASAS REALES • PIRQUE • 2.4 – 2.5 KG • DORADO CRUJIENTE" />
       </Section>
 
       <Section title="Horarios y ubicación" description="Textos de la sección (los horarios se editan en Mi negocio).">
@@ -337,6 +345,7 @@ export default function CustomizeTab() {
         <Text label="Frase bajo el logo" path="footer.tagline" wide />
         <Text label="Texto de copyright (va después de © año)" path="footer.copyright" wide />
         <Text label="Enlace al panel" path="footer.admin_label" />
+        <Text label="Créditos de fotos" path="footer.credits" area hint="Obligatorio mientras uses las fotos de muestra (licencia). Bórralo cuando subas tus propias fotos." />
       </Section>
 
       <Section title="Google y redes (SEO)" description="Cómo aparece el sitio en buscadores y en la pestaña.">

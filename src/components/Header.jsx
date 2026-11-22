@@ -47,7 +47,8 @@ export function AnnouncementBar() {
 
 export default function Header() {
   const { config } = useStore()
-  const { count, setOpen, bump } = useCart()
+  const { count, setOpen } = useCart()
+  const cartRef = useRef(null)
   const [solid, setSolid] = useState(false)
   const badgeRef = useRef(null)
   const nav = config.nav || {}
@@ -59,12 +60,16 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // "Pop" del contador al agregar un producto.
+  // "Pop" del contador cuando la insignia del producto llega al botón.
   useEffect(() => {
-    if (!bump || !badgeRef.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.fromTo(badgeRef.current, { scale: 1.6 }, { scale: 1, duration: 0.5, ease: 'back.out(3)' })
-  }, [bump])
+    const onPop = () => {
+      if (!badgeRef.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.fromTo(badgeRef.current, { scale: 1.8 }, { scale: 1, duration: 0.55, ease: 'back.out(3)' })
+      gsap.fromTo(cartRef.current, { scale: 1.08 }, { scale: 1, duration: 0.45, ease: 'power3.out' })
+    }
+    window.addEventListener('pc:cart-pop', onPop)
+    return () => window.removeEventListener('pc:cart-pop', onPop)
+  }, [])
 
   const links = [
     ['#menu', nav.menu],
@@ -72,31 +77,39 @@ export default function Header() {
     ['#visitanos', nav.visit],
   ].filter(([, l]) => l?.trim())
 
+  // Header inteligente: arriba es transparente y amplio; al bajar se compacta en una
+  // cápsula flotante de vidrio oscuro. La caja externa mantiene su altura (sin saltos de layout).
   return (
-    <header
-      className={`sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${
-        solid ? 'border-b border-cream/10 bg-carbon/85 backdrop-blur-md' : 'border-b border-transparent bg-transparent'
-      }`}
-    >
+    <header className="sticky top-0 z-40 h-16">
       <a
         href="#menu"
         className="sr-only z-50 rounded-full bg-gold px-4 py-2 text-carbon focus:not-sr-only focus:absolute focus:top-3 focus:left-3"
       >
         Saltar al menú
       </a>
-      <div className="wrap flex h-16 items-center justify-between gap-4">
-        <Logo />
-        <nav aria-label="Principal" className="hidden items-center gap-8 text-[15px] font-medium text-ash md:flex">
+      <div
+        className={`mx-auto flex items-center justify-between gap-4 border transition-[max-width,height,margin,padding,background-color,border-color,border-radius,box-shadow,backdrop-filter] duration-500 ease-[var(--ease-out-expo)] ${
+          solid
+            ? 'mt-2 h-12 max-w-[min(64rem,calc(100%-1.5rem))] rounded-full border-cream/10 bg-carbon/80 px-2 pl-4 shadow-[0_12px_40px_-12px_rgb(0_0_0/0.7)] backdrop-blur-xl backdrop-saturate-150 sm:pl-5'
+            : 'mt-0 h-16 max-w-[82rem] rounded-none border-transparent bg-transparent px-[clamp(1rem,4vw,2.5rem)]'
+        }`}
+      >
+        <div className={`origin-left transition-transform duration-500 ease-[var(--ease-out-expo)] ${solid ? 'scale-[0.86]' : ''}`}>
+          <Logo />
+        </div>
+        <nav aria-label="Principal" className="hidden items-center gap-7 text-[15px] font-medium text-ash md:flex">
           {links.map(([href, label]) => (
-            <a key={href} className="transition-colors hover:text-cream" href={href}>
+            <a key={href} className="relative transition-colors hover:text-cream after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-ember after:transition-transform after:duration-300 hover:after:scale-x-100" href={href}>
               {label}
             </a>
           ))}
         </nav>
         <button
+          ref={cartRef}
+          data-cart-target
           type="button"
           onClick={() => setOpen(true)}
-          className="btn btn-ghost relative min-h-11 px-4"
+          className={`btn relative px-4 transition-[min-height,background-color,color] ${solid ? 'min-h-9 bg-ember text-carbon hover:bg-gold' : 'btn-ghost min-h-11'}`}
           aria-label={`Ver pedido, ${count} ${count === 1 ? 'producto' : 'productos'}`}
         >
           <IconBag />
@@ -104,7 +117,7 @@ export default function Header() {
           <span
             ref={badgeRef}
             className={`tnum grid min-w-6 place-items-center rounded-full px-1.5 text-xs font-bold ${
-              count ? 'bg-ember text-carbon' : 'bg-cream/10 text-ash'
+              solid ? 'bg-carbon text-cream' : count ? 'bg-ember text-carbon' : 'bg-cream/10 text-ash'
             }`}
           >
             {count}
