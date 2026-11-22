@@ -100,10 +100,10 @@ export default function Process() {
           scrollTrigger: {
             trigger: '[data-pin]',
             start: 'top top',
-            end: `+=${n * 100}%`,
+            // Recorrido más corto (antes n × 100% con snap): la escena acompaña el scroll sin retenerlo.
+            end: `+=${n * 70}%`,
             pin: true,
-            scrub: 1,
-            snap: { snapTo: 'labels', inertia: false, duration: { min: 0.25, max: 0.7 }, delay: 0.08, ease: 'power1.inOut' },
+            scrub: 0.8,
           },
         })
         tl.addLabel('s0')
@@ -183,7 +183,7 @@ export default function Process() {
                 {steps.map((s, i) => (
                   <div key={i} data-step className="absolute inset-0">
                     <p className="tnum font-display text-2xl font-black text-ember">
-                      {String(i + 1).padStart(2, '0')} <span className="text-cream/30">/ {String(steps.length).padStart(2, '0')}</span>
+                      {String(i + 1).padStart(2, '0')} <span className="text-cream/60">/ {String(steps.length).padStart(2, '0')}</span>
                     </p>
                     <h3 className="mt-3 font-display text-[2.6rem] leading-none font-extrabold">{s.title}</h3>
                     <p className="mt-4 max-w-md text-lg leading-relaxed text-ash">{s.text}</p>

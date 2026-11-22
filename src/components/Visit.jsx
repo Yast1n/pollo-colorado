@@ -1,10 +1,9 @@
 import { useRef } from 'react'
 import { useStore } from '../context/StoreContext'
 import { gsap, useGSAP, MQ } from '../lib/gsap'
-import { groupHours } from '../utils/hours'
+import { chileNow, groupHours, openState } from '../utils/hours'
 import { mapsLinks, whatsappLink } from '../utils/whatsapp'
-import { DAYS } from '../data/seed'
-import StatusBadge from './StatusBadge'
+import StatusBadge, { useStoreStatus } from './StatusBadge'
 import { IconClock, IconPin, IconWhatsApp } from './Icons'
 
 export default function Visit() {
@@ -12,7 +11,16 @@ export default function Visit() {
   const v = config.visit || {}
   const root = useRef(null)
   const rows = groupHours(config.hours)
-  const today = DAYS[new Date().getDay()]
+  const status = useStoreStatus()
+  const now = chileNow()
+  const os = openState(config.hours, now)
+  // Línea de horario en vivo (solo si no contradice al estado: "Agotado" o "Cerrado" mandan).
+  const liveLine =
+    status === 'open' && os.open
+      ? `Cierra hoy a las ${os.closes}`
+      : status === 'scheduling' && !os.open && os.opens
+        ? `Abre ${os.day} a las ${os.opens}`
+        : null
   const maps = mapsLinks(config.maps_query || config.address)
 
   // Momento tipográfico: "PIRQUE" se desliza con el scroll (texto decorativo, no información).
@@ -53,24 +61,27 @@ export default function Visit() {
           <p className="mt-5 max-w-md text-lg text-ink-soft">
             {v.intro} {config.delivery_note}
           </p>
-          <div className="mt-6 inline-flex rounded-full bg-carbon">
-            <StatusBadge status={config.status} showHint={false} />
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="inline-flex rounded-full bg-carbon">
+              <StatusBadge status={status} showHint={false} />
+            </span>
+            {liveLine && <span className="tnum text-[15px] font-semibold text-ink-soft">{liveLine}</span>}
           </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:col-span-7">
-          <div className="rounded-3xl bg-white p-6 sm:p-7">
+          <div className="rounded-2xl bg-white p-6 shadow-[0_18px_40px_-30px_rgb(18_15_13/0.5)] sm:p-7">
             <h3 className="flex items-center gap-2 font-display text-3xl font-extrabold">
               <IconClock className="text-ember" /> {v.hours_title}
             </h3>
             <dl className="mt-5 divide-y divide-carbon/10">
               {rows.map((r) => {
-                const isToday = r.days.includes(today)
+                const isToday = r.idx.includes(now.getDay())
                 return (
                   <div key={r.days} className="flex items-baseline justify-between gap-4 py-3">
                     <dt className={isToday ? 'font-semibold text-carbon' : 'text-ink-soft'}>
                       {r.days}
-                      {isToday && <span className="ml-2 rounded-full bg-ember/15 px-2 py-0.5 text-xs font-bold text-ember-deep">Hoy</span>}
+                      {isToday && <span className="ml-2 rounded-full bg-ember-deep px-2 py-0.5 text-xs font-bold text-white">Hoy</span>}
                     </dt>
                     <dd className={`tnum ${r.text === 'Cerrado' ? 'text-ink-soft' : 'font-semibold'}`}>{r.text}</dd>
                   </div>
@@ -79,7 +90,7 @@ export default function Visit() {
             </dl>
           </div>
 
-          <div className="flex flex-col rounded-3xl bg-carbon p-6 text-cream sm:p-7">
+          <div className="flex flex-col rounded-2xl bg-carbon p-6 text-cream shadow-[0_24px_50px_-30px_rgb(18_15_13/0.8)] sm:p-7">
             <h3 className="flex items-center gap-2 font-display text-3xl font-extrabold">
               <IconPin className="text-gold" /> {v.where_title}
             </h3>

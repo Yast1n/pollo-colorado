@@ -5,8 +5,9 @@ import { gsap, MQ } from '../lib/gsap'
 import { assetUrl, formatCLP } from '../utils/format'
 import { timeSlots } from '../utils/hours'
 import { buildOrderMessage, whatsappLink } from '../utils/whatsapp'
-import { statusInfo } from './StatusBadge'
-import { IconClose, IconMinus, IconPlus, IconWhatsApp, IconBag } from './Icons'
+import { statusInfo, useStoreStatus } from './StatusBadge'
+import AnimatedPrice from './AnimatedPrice'
+import { IconCheck, IconClose, IconMinus, IconPlus, IconWhatsApp, IconBag } from './Icons'
 
 const FORM_KEY = 'pc:order-form:v1'
 
@@ -26,12 +27,16 @@ export default function CartDrawer() {
     }
   })
   const [touched, setTouched] = useState(false)
+  const [sent, setSent] = useState(false) // pedido enviado a WhatsApp: mostramos el cierre
+  const [undo, setUndo] = useState(null) // copia del pedido recién vaciado (para "Deshacer")
+  const sentView = useRef(null)
+  const effStatus = useStoreStatus()
 
   const slots = useMemo(() => timeSlots(config.hours), [config.hours, open]) // eslint-disable-line react-hooks/exhaustive-deps
   const available = items.filter((i) => i.available)
   const soldOutItems = items.filter((i) => !i.available)
   const availTotal = available.reduce((s, i) => s + i.qty * i.price, 0)
-  const status = statusInfo(config.status, config)
+  const status = statusInfo(effStatus, config)
   const ct = config.cart || {}
   const QUICK_NOTES = (ct.quick_notes || []).filter((n) => n?.trim())
   const addressMissing = form.mode === 'delivery' && !form.address.trim()
@@ -57,6 +62,7 @@ export default function CartDrawer() {
     const desktop = window.matchMedia(MQ.desktop).matches
     const from = desktop ? { xPercent: 100 } : { yPercent: 100 }
     if (open) {
+      setSent(false)
       lastFocus.current = document.activeElement
       setMounted(true)
       document.documentElement.style.overflow = 'hidden'
@@ -129,8 +135,47 @@ export default function CartDrawer() {
     if (addressMissing || !available.length) {
       e.preventDefault()
       setTouched(true)
+      return
     }
+    // WhatsApp se abre en otra pestaña/app; aquí mostramos qué falta para cerrar el pedido.
+    setTimeout(() => setSent(true), 250)
   }
+
+  const onClear = () => {
+    setUndo(items.map((i) => [i.id, i.qty]))
+    clear()
+  }
+  const onUndo = () => {
+    undo?.forEach(([id, q]) => setQty(id, q))
+    setUndo(null)
+  }
+  const newOrder = () => {
+    clear()
+    setUndo(null)
+    setSent(false)
+    setForm((f) => ({ ...f, notes: '', time: 'asap' }))
+  }
+
+  // El aviso de "Deshacer" dura unos segundos; al agregar algo nuevo deja de tener sentido.
+  useEffect(() => {
+    if (!undo) return
+    if (items.length) return setUndo(null)
+    const t = setTimeout(() => setUndo(null), 8000)
+    return () => clearTimeout(t)
+  }, [undo, items.length])
+
+  // Entrada del cierre: el check se "dibuja" y el texto sube.
+  useEffect(() => {
+    if (!sent || !sentView.current || window.matchMedia(MQ.reduce).matches) return
+    const el = sentView.current
+    const path = el.querySelector('path')
+    const len = path?.getTotalLength?.() || 24
+    gsap
+      .timeline()
+      .fromTo('[data-sent-ring]', { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(2)' })
+      .fromTo(path, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.45, ease: 'power2.out' }, 0.2)
+      .from(el.querySelectorAll('[data-sent-line]'), { y: 16, opacity: 0, stagger: 0.07, duration: 0.6 }, 0.25)
+  }, [sent])
 
   if (!mounted) return null
 
@@ -166,13 +211,43 @@ export default function CartDrawer() {
               <a href="#menu" onClick={() => setOpen(false)} className="btn btn-dark mt-6">
                 {config.hero_cta_menu || 'Ver la carta'}
               </a>
+              {undo && (
+                <p role="status" className="mt-6 flex items-center gap-3 rounded-full bg-carbon px-4 py-2 text-sm text-cream">
+                  Vaciaste el pedido.
+                  <button type="button" onClick={onUndo} className="font-semibold text-gold underline underline-offset-4">
+                    Deshacer
+                  </button>
+                </p>
+              )}
+            </div>
+          ) : sent ? (
+            <div ref={sentView} className="flex flex-col items-center py-10 text-center" role="status">
+              <span data-sent-ring className="grid size-20 place-items-center rounded-full bg-[#25D366] text-carbon shadow-[0_14px_30px_-12px_rgb(37_211_102/0.8)]">
+                <IconCheck width="40" height="40" strokeWidth="2.5" />
+              </span>
+              <p data-sent-line className="display mt-6 text-4xl">Pedido listo en WhatsApp</p>
+              <p data-sent-line className="mt-3 max-w-xs text-ink-soft">
+                Falta un paso: toca <strong className="text-carbon">Enviar</strong> en WhatsApp. Te confirmamos disponibilidad
+                {form.mode === 'delivery' ? ' y el costo del envío' : ''} por ahí mismo.
+              </p>
+              <div data-sent-line className="mt-8 grid w-full gap-2.5">
+                <a href={href} target="_blank" rel="noopener noreferrer" className="btn w-full bg-[#25D366] text-carbon hover:bg-[#1ebe5a]">
+                  <IconWhatsApp /> Abrir WhatsApp otra vez
+                </a>
+                <button type="button" onClick={() => setSent(false)} className="btn w-full border border-carbon/20 hover:border-carbon/50">
+                  Volver a mi pedido
+                </button>
+                <button type="button" onClick={newOrder} className="mt-1 py-2 text-sm text-ink-soft underline-offset-4 hover:text-carbon hover:underline">
+                  Empezar un pedido nuevo
+                </button>
+              </div>
             </div>
           ) : (
             <>
-              {config.status !== 'open' && (
+              {effStatus !== 'open' && (
                 <p className="mb-5 rounded-2xl bg-gold/20 p-4 text-[15px]">
                   <strong>{status.label}.</strong>{' '}
-                  {config.status === 'scheduling'
+                  {effStatus === 'scheduling'
                     ? 'Elige una hora y te confirmamos por WhatsApp.'
                     : 'Igual puedes enviarnos tu consulta y te respondemos apenas podamos.'}
                 </p>
@@ -315,11 +390,11 @@ export default function CartDrawer() {
           )}
         </div>
 
-        {items.length > 0 && (
+        {items.length > 0 && !sent && (
           <div className="border-t border-carbon/10 px-6 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <div className="flex items-baseline justify-between">
               <span className="text-ink-soft">Total estimado</span>
-              <span className="tnum font-display text-4xl font-black">{formatCLP(availTotal)}</span>
+              <AnimatedPrice value={availTotal} className="font-display text-4xl font-black" />
             </div>
             {form.mode === 'delivery' && <p className="text-right text-sm text-ink-soft">+ envío a confirmar</p>}
             {soldOutItems.length > 0 && (
@@ -338,7 +413,8 @@ export default function CartDrawer() {
             >
               <IconWhatsApp /> {ct.send_label || 'Pedir por WhatsApp'}
             </a>
-            <button type="button" onClick={clear} className="mt-2 w-full py-2 text-sm text-ink-soft underline-offset-4 hover:underline">
+            <p className="mt-2 text-center text-xs text-ink-soft">Se abre WhatsApp con tu pedido ya escrito. Nada se cobra aquí.</p>
+            <button type="button" onClick={onClear} className="mt-2 w-full py-2 text-sm text-ink-soft underline-offset-4 hover:underline">
               Vaciar pedido
             </button>
             <span className="sr-only">Total sin contar envío: {formatCLP(total)}</span>

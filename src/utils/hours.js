@@ -15,18 +15,21 @@ export function groupHours(hours = []) {
     if (!h) continue
     const text = h.closed ? 'Cerrado' : `${h.open} – ${h.close}`
     const last = rows[rows.length - 1]
-    if (last && last.text === text) last.to = d
-    else rows.push({ from: d, to: d, text })
+    if (last && last.text === text) {
+      last.to = d
+      last.idx.push(d)
+    } else rows.push({ from: d, to: d, text, idx: [d] })
   }
   return rows.map((r) => ({
     days: r.from === r.to ? DAYS[r.from] : `${DAYS[r.from]} a ${DAYS[r.to]}`,
     text: r.text,
+    idx: r.idx, // días (0 = domingo) que cubre la fila
   }))
 }
 
 // Franjas de 15 min para hoy, desde ahora + 30 min hasta el cierre.
 // Si hoy no quedan franjas, ofrece las de mañana (pedidos agendados).
-export function timeSlots(hours = [], now = new Date()) {
+export function timeSlots(hours = [], now = chileNow()) {
   const build = (dayIdx, fromMin, prefix) => {
     const h = hours[dayIdx]
     if (!h || h.closed) return []
@@ -46,8 +49,51 @@ export function timeSlots(hours = [], now = new Date()) {
   return { label: 'Hoy', slots: [] }
 }
 
-export function todayHours(hours = [], now = new Date()) {
+export function todayHours(hours = [], now = chileNow()) {
   const h = hours[now.getDay()]
   if (!h || h.closed) return 'Hoy cerrado'
   return `Hoy ${h.open} – ${h.close}`
+}
+
+// Hora local de Chile (el local está en Pirque), aunque el visitante tenga otro huso horario.
+// Devuelve un Date "de pared": getDay/getHours/getMinutes corresponden a America/Santiago.
+export function chileNow(d = new Date()) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Santiago',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hourCycle: 'h23',
+    }).formatToParts(d)
+    const p = Object.fromEntries(parts.map((x) => [x.type, x.value]))
+    return new Date(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute)
+  } catch {
+    return d
+  }
+}
+
+// ¿Está abierto según el horario? Si no, cuándo abre. { open, closes } | { open: false, opens, day }
+export function openState(hours = [], now = chileNow()) {
+  const d = now.getDay()
+  const min = now.getHours() * 60 + now.getMinutes()
+  const h = hours[d]
+  if (h && !h.closed && min >= toMin(h.open) && min < toMin(h.close)) return { open: true, closes: h.close }
+  for (let i = 0; i <= 7; i++) {
+    const dd = (d + i) % 7
+    const x = hours[dd]
+    if (!x || x.closed || (i === 0 && min >= toMin(x.open))) continue
+    return { open: false, opens: x.open, day: i === 0 ? 'hoy' : i === 1 ? 'mañana' : DAYS[dd].toLowerCase() }
+  }
+  return { open: false }
+}
+
+// Estado que ve el cliente: el del admin manda, salvo "Abierto" fuera de horario,
+// que se muestra como "Agendando pedidos" (no prometemos pollos con el local cerrado).
+export function effectiveStatus(config, now = chileNow()) {
+  const s = config?.status || 'open'
+  if (s !== 'open' || !config?.hours?.length) return s
+  return openState(config.hours, now).open ? 'open' : 'scheduling'
 }

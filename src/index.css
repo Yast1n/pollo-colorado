@@ -37,7 +37,40 @@
   }
   ::selection {
     background: var(--color-ember);
-    color: var(--color-cream);
+    color: var(--color-carbon);
+  }
+  input,
+  textarea {
+    caret-color: var(--color-ember);
+  }
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  /* Barra de scroll con la paleta (Firefox + WebKit) */
+  html {
+    scrollbar-color: var(--color-carbon-3) var(--color-carbon);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-carbon);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-carbon-3);
+    border: 2px solid var(--color-carbon);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ember-deep);
   }
   button,
   [role='button'] {
@@ -206,6 +239,17 @@
 .frame-ticks::after { top: -8px; right: -8px; border-width: 2px 2px 0 0; }
 .frame-ticks > i::before { bottom: -8px; left: -8px; border-width: 0 0 2px 2px; }
 .frame-ticks > i::after { bottom: -8px; right: -8px; border-width: 0 2px 2px 0; }
+
+/* ---------- Barra de aviso: reflejo que cruza cada ~6 s ---------- */
+.announce-sheen {
+  background: linear-gradient(100deg, transparent, rgb(250 245 238 / 0.35), transparent);
+  transform: translateX(0) skewX(-18deg);
+  animation: sheen 6s var(--ease-out-quart) 1.2s infinite;
+}
+@keyframes sheen {
+  0% { transform: translateX(0) skewX(-18deg); }
+  30%, 100% { transform: translateX(450%) skewX(-18deg); }
+}
 
 /* ---------- Marquee ---------- */
 .marquee-track { display: flex; width: max-content; will-change: transform; }

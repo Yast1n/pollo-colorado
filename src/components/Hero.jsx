@@ -4,7 +4,7 @@ import { gsap, useGSAP, MQ, SplitText } from '../lib/gsap'
 import { assetUrl } from '../utils/format'
 import { whatsappLink } from '../utils/whatsapp'
 import EmberField from './EmberField'
-import StatusBadge from './StatusBadge'
+import StatusBadge, { useStoreStatus } from './StatusBadge'
 import { IconArrowDown, IconWhatsApp } from './Icons'
 
 export function Stamp({ stamp, className = '' }) {
@@ -39,6 +39,7 @@ const SMOKE = [
 
 export default function Hero() {
   const { config } = useStore()
+  const status = useStoreStatus()
   const root = useRef(null)
   const title = useRef(null)
   const words = (config.hero_title || '').split(/\s+/).filter(Boolean)
@@ -66,15 +67,17 @@ export default function Hero() {
           .from('[data-dish]', { scale: 1.35, duration: 2, ease: 'expo.out' }, 'ignite+=0.3')
           .addLabel('title', 'ignite+=0.25')
           .from('[data-badge]', { y: 14, opacity: 0, duration: 0.7 }, 'title+=0.2')
-          .from('[data-sub]', { y: 18, opacity: 0, duration: 0.8 }, 'title+=0.55')
-          .from('[data-cta] > *', { y: 18, opacity: 0, duration: 0.7, stagger: 0.08 }, 'title+=0.7')
+          .from('[data-sub]', { y: 18, opacity: 0, duration: 0.8 }, 'title+=0.4')
+          .from('[data-cta] > *', { y: 18, opacity: 0, duration: 0.7, stagger: 0.08 }, 'title+=0.5')
           .from('[data-ticks]', { opacity: 0, scale: 1.06, duration: 0.8 }, 'title+=0.9')
         if (root.current.querySelector('[data-stamp]')) {
           tl.from('[data-stamp]', { scale: 0, rotate: -160, duration: 1.3, ease: 'back.out(1.6)' }, 'title+=0.85')
         }
 
         // El título se parte en líneas con máscara cuando las fuentes ya cargaron (líneas correctas).
-        document.fonts.ready.then(() => {
+        // Tope de 700 ms: con red lenta no dejamos el título invisible esperando la fuente.
+        const fontsReady = Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 700))])
+        fontsReady.then(() => {
           if (!alive || !title.current) return
           split = SplitText.create(title.current, { type: 'lines', mask: 'lines' })
           gsap.set(title.current, { autoAlpha: 1 })
@@ -158,7 +161,7 @@ export default function Hero() {
       <div className="wrap grid items-center gap-12 md:grid-cols-12">
         <div className="relative z-10 md:col-span-7">
           <div data-badge>
-            <StatusBadge status={config.status} />
+            <StatusBadge status={status} />
           </div>
 
           <h1 key={`${plain}|${accent}`} ref={title} className="display mt-6 text-[clamp(3.4rem,10.5vw,8rem)] text-cream">

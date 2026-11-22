@@ -4,6 +4,7 @@ import { useStore } from '../context/StoreContext'
 import { gsap } from '../lib/gsap'
 import { assetUrl } from '../utils/format'
 import { IconBag } from './Icons'
+import { useStoreStatus } from './StatusBadge'
 
 export function DefaultMark({ className = 'size-9' }) {
   return (
@@ -37,10 +38,20 @@ export function Logo({ className = '', href = '#top' }) {
 
 export function AnnouncementBar() {
   const { config } = useStore()
-  if (!config.announcement_enabled || !config.announcement?.trim()) return null
+  const status = useStoreStatus()
+  // Un aviso de "nueva tanda" no tiene sentido si hoy ya no quedan pollos o el local está cerrado.
+  if (!config.announcement_enabled || !config.announcement?.trim() || status === 'soldout' || status === 'closed') return null
   return (
-    <div className="relative z-50 bg-ember text-carbon">
-      <p className="wrap py-2 text-center text-sm font-semibold">{config.announcement}</p>
+    <div className="relative z-50 overflow-hidden bg-ember text-carbon">
+      <p className="wrap flex items-center justify-center gap-2.5 py-2 text-center text-sm font-semibold text-pretty">
+        <span className="relative flex size-2 shrink-0" aria-hidden="true">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-carbon/50" />
+          <span className="relative inline-flex size-2 rounded-full bg-carbon" />
+        </span>
+        <span>{config.announcement}</span>
+      </p>
+      {/* Reflejo de brasa que cruza la barra cada tanto */}
+      <span aria-hidden="true" className="announce-sheen pointer-events-none absolute inset-y-0 -left-1/3 w-1/3" />
     </div>
   )
 }
