@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CATEGORIES, TAGS } from '../data/seed'
 import * as store from '../services/storeService'
 import { assetUrl } from '../utils/format'
-import { IconClose, IconImage } from '../components/Icons'
+import { IconClose, IconImage, IconTrash } from '../components/Icons'
 import { Switch } from './ui'
 import { useToast } from './Toast'
 
@@ -19,7 +19,7 @@ const EMPTY = {
   sort_order: 0,
 }
 
-export default function ProductForm({ product, onClose, onSaved }) {
+export default function ProductForm({ product, onClose, onSaved, onDelete }) {
   const toast = useToast()
   const [p, setP] = useState({ ...EMPTY, ...product })
   const [uploading, setUploading] = useState(false)
@@ -189,7 +189,18 @@ export default function ProductForm({ product, onClose, onSaved }) {
         </div>
 
         <div className="flex gap-3 border-t border-cream/10 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          <button type="button" onClick={onClose} className="btn btn-ghost flex-1 sm:flex-none">Cancelar</button>
+          {onDelete ? (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="btn min-h-12 shrink-0 px-4 text-red-300 hover:bg-red-500/15"
+              aria-label="Eliminar producto"
+            >
+              <IconTrash width="18" height="18" /> <span className="hidden sm:inline">Eliminar</span>
+            </button>
+          ) : (
+            <button type="button" onClick={onClose} className="btn btn-ghost flex-1 sm:flex-none">Cancelar</button>
+          )}
           <button type="submit" disabled={saving || uploading} className="btn btn-ember flex-1 disabled:opacity-60">
             {saving ? 'Guardando…' : isNew ? 'Crear producto' : 'Guardar cambios'}
           </button>

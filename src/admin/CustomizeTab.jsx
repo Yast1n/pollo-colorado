@@ -46,7 +46,7 @@ const FormCtx = createContext(null)
 
 // Campos que gestionan otras pestañas (Operación / Mi negocio): esta pestaña nunca los guarda,
 // así no pisa un cambio de estado hecho desde otro dispositivo mientras editas textos.
-const OTHER_TABS = ['status', 'announcement', 'announcement_enabled', 'whatsapp', 'greeting', 'address', 'maps_query', 'delivery_note', 'hours', 'socials']
+const OTHER_TABS = ['status', 'status_auto', 'status_date', 'announcement', 'announcement_enabled', 'whatsapp', 'greeting', 'address', 'maps_query', 'delivery_note', 'hours', 'socials']
 const ownFields = (cfg) => Object.fromEntries(Object.entries(cfg).filter(([k]) => !OTHER_TABS.includes(k)))
 
 function Text({ label, path, area, hint, wide, max, placeholder }) {
@@ -357,8 +357,8 @@ export default function CustomizeTab() {
         Restaurar textos de fábrica
       </button>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-cream/10 bg-carbon/95 backdrop-blur">
-        <div className="wrap flex items-center justify-between gap-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 border-t border-cream/10 bg-carbon/95 backdrop-blur sm:bottom-0">
+        <div className="wrap flex items-center justify-between gap-3 py-3 sm:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <span className={`text-sm ${dirty ? 'text-gold' : 'text-ash'}`}>{dirty ? 'Tienes cambios sin guardar' : 'Todo guardado'}</span>
           <div className="flex gap-2">
             {dirty && (

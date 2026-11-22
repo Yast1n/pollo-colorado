@@ -119,7 +119,7 @@ export default function BusinessTab() {
         </div>
       </Card>
 
-      <div className="sticky bottom-0 -mx-4 border-t border-cream/10 bg-carbon/90 px-4 py-4 backdrop-blur sm:mx-0 sm:rounded-2xl sm:border">
+      <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 sm:bottom-0 border-t border-cream/10 bg-carbon/90 px-4 py-4 backdrop-blur sm:mx-0 sm:rounded-2xl sm:border">
         <button type="submit" disabled={saving} className="btn btn-ember w-full sm:w-auto disabled:opacity-60">
           {saving ? 'Guardando…' : 'Guardar todos los cambios'}
         </button>

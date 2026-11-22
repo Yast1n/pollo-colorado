@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { STATUSES } from '../data/seed'
 import { useStore } from '../context/StoreContext'
-import { effectiveStatus } from '../utils/hours'
+import { effectiveStatus, nextOpeningHint } from '../utils/hours'
 
 // Estado efectivo para el cliente (admin + horario), recalculado cada minuto.
 export function useStoreStatus() {
@@ -25,7 +25,9 @@ export const STATUS_STYLES = {
 export function statusInfo(id, config) {
   const base = STATUSES.find((s) => s.id === id) || STATUSES[0]
   const custom = config?.status_texts?.[base.id] || {}
-  return { ...base, label: custom.label || base.label, hint: custom.hint ?? base.hint }
+  // Cerrado por horario: decimos cuándo abrimos (más útil que el texto fijo).
+  const auto = base.id === 'closed' ? nextOpeningHint(config) : null
+  return { ...base, label: custom.label || base.label, hint: auto || (custom.hint ?? base.hint) }
 }
 
 export default function StatusBadge({ status, showHint = true, className = '' }) {

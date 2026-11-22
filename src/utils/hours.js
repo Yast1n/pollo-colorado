@@ -90,10 +90,38 @@ export function openState(hours = [], now = chileNow()) {
   return { open: false }
 }
 
-// Estado que ve el cliente: el del admin manda, salvo "Abierto" fuera de horario,
-// que se muestra como "Agendando pedidos" (no prometemos pollos con el local cerrado).
+// "hoy" / "mañana" / "el martes"
+export const dayPhrase = (day) => (day === 'hoy' || day === 'mañana' ? day : `el ${day}`)
+
+// Fecha de hoy en Chile como "AAAA-MM-DD" (para cambios de estado que valen solo por hoy).
+export function chileDateKey(now = chileNow()) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
+
+// ¿El estado lo decide el horario en este momento? (modo automático y sin cambio manual de hoy)
+export function scheduleDriven(config, now = chileNow()) {
+  return Boolean(config?.status_auto && config?.hours?.length === 7 && config.status_date !== chileDateKey(now))
+}
+
+// Estado que ve el cliente.
+// - Automático: el horario decide Abierto/Cerrado; un cambio manual en el panel manda solo por ese día.
+// - Manual: el del admin manda, salvo "Abierto" fuera de horario, que se muestra como
+//   "Agendando pedidos" (no prometemos pollos con el local cerrado).
 export function effectiveStatus(config, now = chileNow()) {
   const s = config?.status || 'open'
-  if (s !== 'open' || !config?.hours?.length) return s
+  if (!config?.hours?.length) return s
+  if (config.status_auto) {
+    if (!scheduleDriven(config, now)) return s
+    return openState(config.hours, now).open ? 'open' : 'closed'
+  }
+  if (s !== 'open') return s
   return openState(config.hours, now).open ? 'open' : 'scheduling'
+}
+
+// Texto "cuándo abrimos" para el estado Cerrado puesto por el horario: "Abrimos mañana a las 12:00".
+export function nextOpeningHint(config, now = chileNow()) {
+  if (!scheduleDriven(config, now)) return null
+  const os = openState(config.hours, now)
+  return !os.open && os.opens ? `Abrimos ${dayPhrase(os.day)} a las ${os.opens}` : null
 }

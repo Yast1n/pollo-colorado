@@ -90,6 +90,32 @@ export const IconArrowDown = (p) => (
 )
 
 // Logo oficial de WhatsApp (glifo), en su verde.
+export const IconList = (p) => (
+  <svg {...base} {...p}>
+    <path d="M9 6h11M9 12h11M9 18h11" />
+    <path d="M4 6h.01M4 12h.01M4 18h.01" strokeWidth="3" />
+  </svg>
+)
+export const IconSliders = (p) => (
+  <svg {...base} {...p}>
+    <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+    <circle cx="16" cy="6" r="2" />
+    <circle cx="10" cy="12" r="2" />
+    <circle cx="18" cy="18" r="2" />
+  </svg>
+)
+export const IconExternal = (p) => (
+  <svg {...base} {...p}>
+    <path d="M14 4h6v6M20 4l-9 9" />
+    <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+  </svg>
+)
+export const IconLogout = (p) => (
+  <svg {...base} {...p}>
+    <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+    <path d="M10 16l-4-4 4-4M6 12h10" />
+  </svg>
+)
 export const IconWhatsApp = ({ className = '', ...p }) => (
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" className={className} {...p}>
     <path

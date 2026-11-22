@@ -4,6 +4,8 @@ import { STATUSES } from '../data/seed'
 import * as store from '../services/storeService'
 import { Card, Switch } from './ui'
 import { useToast } from './Toast'
+import { useStoreStatus } from '../components/StatusBadge'
+import { chileDateKey, chileNow, dayPhrase, openState, scheduleDriven } from '../utils/hours'
 
 const STATUS_STYLE = {
   open: 'data-[on=true]:border-emerald-400 data-[on=true]:bg-emerald-400/15',
@@ -21,20 +23,45 @@ export default function OperationsTab() {
   const [enabled, setEnabled] = useState(config.announcement_enabled)
   const [saving, setSaving] = useState(false)
 
+  const [busy, setBusy] = useState(false)
+  const auto = Boolean(config.status_auto)
+  const live = useStoreStatus() // lo que ve el cliente ahora mismo
+  const bySchedule = scheduleDriven(config)
+  const os = openState(config.hours, chileNow())
+  const labelOf = (id) => config.status_texts?.[id]?.label || STATUSES.find((s) => s.id === id)?.label
+
   useEffect(() => setStatus(config.status), [config.status])
 
-  const changeStatus = async (id) => {
-    const prev = status
-    setStatus(id) // optimista: 1 clic
+  const save = async (patch, msg, rollback) => {
+    setBusy(true)
     try {
-      await store.updateConfig({ status: id })
-      toast(`Estado: ${config.status_texts?.[id]?.label || STATUSES.find((s) => s.id === id).label}`)
-      reload()
+      await store.updateConfig(patch)
+      toast(msg)
+      await reload()
     } catch (e) {
-      setStatus(prev)
+      rollback?.()
       toast(e.message, 'error')
+    } finally {
+      setBusy(false)
     }
   }
+
+  // En automático, elegir un estado lo fija solo por hoy; mañana vuelve a mandar el horario.
+  const changeStatus = (id) => {
+    const prev = status
+    setStatus(id) // optimista: 1 toque
+    save(
+      auto ? { status: id, status_date: chileDateKey() } : { status: id },
+      auto ? `Por hoy: ${labelOf(id)}` : `Estado: ${labelOf(id)}`,
+      () => setStatus(prev),
+    )
+  }
+  const setAuto = (v) =>
+    save({ status_auto: v, status_date: '' }, v ? 'El horario controla el estado' : 'Estado manual: lo cambias tú')
+  const backToSchedule = () => save({ status_date: '' }, 'De vuelta al horario')
+
+  const selected = auto ? live : status
+  const scheduleLine = os.open ? `Según el horario: abierto hasta las ${os.closes}` : os.opens ? `Según el horario: cerrado, abre ${dayPhrase(os.day)} a las ${os.opens}` : 'Sin horario de apertura configurado'
 
   const saveBanner = async (e) => {
     e.preventDefault()
@@ -54,19 +81,42 @@ export default function OperationsTab() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <Card title="Estado del local" description="Se muestra en vivo en el sitio. Un clic y listo.">
+      <Card title="Estado del local" description="Es lo que ven tus clientes en el sitio.">
+        <div className="flex items-center justify-between gap-4 rounded-2xl bg-carbon p-4">
+          <span>
+            <span className="block font-semibold">Automático según horario</span>
+            <span className="mt-0.5 block text-sm text-ash">Abre y cierra solo con los horarios de “Mi negocio”.</span>
+          </span>
+          <Switch checked={auto} onChange={setAuto} label="Estado automático según horario" disabled={busy} />
+        </div>
+
+        <p className="mt-4 flex items-start gap-2.5 text-sm" role="status">
+          <span className={`mt-1.5 size-2.5 shrink-0 rounded-full ${DOT[live]}`} />
+          <span>
+            Ahora el sitio muestra <strong>{labelOf(live)}</strong>
+            {auto && <span className="block text-ash">{bySchedule ? scheduleLine : 'Cambio manual de hoy. Mañana vuelve al horario.'}</span>}
+          </span>
+        </p>
+        {auto && !bySchedule && (
+          <button type="button" onClick={backToSchedule} disabled={busy} className="btn btn-ghost mt-3 min-h-11 w-full text-sm">
+            Volver al horario ahora
+          </button>
+        )}
+
+        <p className="mt-6 mb-3 text-sm font-semibold text-ash">{auto ? 'Cambiar solo por hoy' : 'Elige el estado'}</p>
         <div className="grid grid-cols-2 gap-3">
           {STATUSES.map((s) => (
             <button
               key={s.id}
               type="button"
-              data-on={status === s.id}
-              aria-pressed={status === s.id}
+              data-on={selected === s.id}
+              aria-pressed={selected === s.id}
+              disabled={busy}
               onClick={() => changeStatus(s.id)}
-              className={`flex min-h-20 flex-col items-start justify-center gap-1 rounded-2xl border-2 border-cream/10 p-4 text-left transition-colors active:scale-[0.98] ${STATUS_STYLE[s.id]}`}
+              className={`flex min-h-20 flex-col items-start justify-center gap-1 rounded-2xl border-2 border-cream/10 p-4 text-left transition-colors active:scale-[0.98] disabled:opacity-70 ${STATUS_STYLE[s.id]}`}
             >
               <span className="flex items-center gap-2 font-semibold">
-                <span className={`size-2.5 rounded-full ${DOT[s.id]}`} /> {config.status_texts?.[s.id]?.label || s.label}
+                <span className={`size-2.5 shrink-0 rounded-full ${DOT[s.id]}`} /> {labelOf(s.id)}
               </span>
               <span className="text-xs text-ash">{config.status_texts?.[s.id]?.hint ?? s.hint}</span>
             </button>

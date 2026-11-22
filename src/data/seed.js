@@ -187,6 +187,9 @@ export const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vier
 
 export const SEED_CONFIG = {
   status: 'open',
+  // Automático: el horario de "Mi negocio" decide Abierto/Cerrado. Un cambio manual vale solo por ese día.
+  status_auto: true,
+  status_date: '',
   announcement: '¡Nueva tanda de pollos saliendo de las brasas a las 13:30 hrs!',
   announcement_enabled: true,
   whatsapp: '56900000000',

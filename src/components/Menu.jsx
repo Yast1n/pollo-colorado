@@ -21,6 +21,8 @@ export default function Menu() {
   const root = useRef(null)
   const bar = useRef(null)
   const indicator = useRef(null)
+  const stickyBar = useRef(null)
+  const listStart = useRef(null)
   const flipState = useRef(null)
   const placed = useRef(false)
 
@@ -107,8 +109,25 @@ export default function Menu() {
     return () => window.removeEventListener('resize', onResize)
   }, [active]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Si el cliente está más abajo en la carta, al cambiar de filtro lo llevamos al primer producto
+  // (con los filtros a la vista). Si ya está arriba, no movemos nada.
+  const scrollToList = () => {
+    const mark = listStart.current
+    if (!mark) return
+    const headerH = parseFloat(getComputedStyle(stickyBar.current).top) || 64
+    const barH = stickyBar.current?.offsetHeight || 0
+    const target = mark.getBoundingClientRect().top + window.scrollY - headerH - barH - 12
+    const dist = window.scrollY - target
+    if (dist <= 8) return
+    // Distancias largas: salto directo (un scroll suave de varias pantallas marea y lo corta el
+    // refresh de ScrollTrigger). Distancias cortas: suave. Las tarjetas igual se animan con Flip.
+    const smooth = !reduceMotion() && dist < window.innerHeight * 0.75
+    window.scrollTo({ top: target, behavior: smooth ? 'smooth' : 'instant' })
+  }
+
   const choose = (id) => {
     if (id === active) return
+    scrollToList()
     if (!reduceMotion()) flipState.current = Flip.getState(root.current.querySelectorAll('[data-card]'), { props: 'opacity' })
     setActive(id)
   }
@@ -156,7 +175,7 @@ export default function Menu() {
           </div>
         )}
 
-        <div className="sticky top-16 z-20 -mx-4 mt-8 bg-cream/90 backdrop-blur sm:mx-0">
+        <div ref={stickyBar} className="sticky top-16 z-20 -mx-4 mt-8 bg-cream/90 backdrop-blur sm:mx-0">
           <div
             ref={bar}
             role="toolbar"
@@ -190,6 +209,8 @@ export default function Menu() {
           {/* Se insinúa que hay más filtros a la derecha (solo cuando la barra desliza) */}
           <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-cream to-transparent sm:hidden" />
         </div>
+
+        <div ref={listStart} aria-hidden="true" />
 
         {error && (
           <div role="alert" className="mt-8 flex flex-col gap-4 rounded-2xl border border-ember/30 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">

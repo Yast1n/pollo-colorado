@@ -8,6 +8,7 @@ import MenuTab from '../admin/MenuTab'
 import BusinessTab from '../admin/BusinessTab'
 import CustomizeTab from '../admin/CustomizeTab'
 import { ToastProvider } from '../admin/Toast'
+import { IconClock, IconExternal, IconFlame, IconList, IconLogout, IconSliders } from '../components/Icons'
 
 function DemoNotice() {
   if (store.isRemote) return null
@@ -91,26 +92,50 @@ function Login({ onDone }) {
 }
 
 const TABS = [
-  { id: 'ops', label: 'Operación del día' },
-  { id: 'menu', label: 'Menú' },
-  { id: 'business', label: 'Mi negocio' },
-  { id: 'customize', label: 'Personalizar' },
+  { id: 'ops', label: 'Operación del día', short: 'Hoy', Icon: IconFlame },
+  { id: 'menu', label: 'Menú', short: 'Menú', Icon: IconList },
+  { id: 'business', label: 'Mi negocio', short: 'Negocio', Icon: IconClock },
+  { id: 'customize', label: 'Personalizar', short: 'Textos', Icon: IconSliders },
 ]
+const TAB_KEY = 'pc-admin-tab'
 
 function Dashboard({ session, onLogout }) {
-  const [tab, setTab] = useState('ops')
+  // Recordamos la última pestaña: en el celular se vuelve al mismo lugar al abrir el acceso directo.
+  const [tab, setTabState] = useState(() => {
+    try {
+      const t = localStorage.getItem(TAB_KEY)
+      return TABS.some((x) => x.id === t) ? t : 'ops'
+    } catch {
+      return 'ops'
+    }
+  })
+  const setTab = (id) => {
+    setTabState(id)
+    window.scrollTo({ top: 0 })
+    try {
+      localStorage.setItem(TAB_KEY, id)
+    } catch {
+      /* sin almacenamiento: no pasa nada */
+    }
+  }
   const { loading } = useStore()
   return (
-    <div className="min-h-dvh bg-carbon">
+    <div className="min-h-dvh bg-carbon pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:pb-0">
       <header className="sticky top-0 z-30 border-b border-cream/10 bg-carbon/90 backdrop-blur">
-        <div className="wrap flex h-16 items-center justify-between gap-3">
+        <div className="wrap flex h-14 items-center justify-between gap-3 sm:h-16">
           <Logo />
-          <div className="flex items-center gap-2">
-            <Link to="/" className="btn btn-ghost min-h-10 px-4 text-sm">Ver sitio</Link>
-            <button type="button" onClick={onLogout} className="btn min-h-10 px-4 text-sm text-ash hover:text-cream">Salir</button>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Link to="/" className="btn btn-ghost min-h-10 px-3 text-sm sm:px-4" aria-label="Ver sitio">
+              <IconExternal width="18" height="18" className="sm:hidden" />
+              <span className="hidden sm:inline">Ver sitio</span>
+            </Link>
+            <button type="button" onClick={onLogout} className="btn min-h-10 px-3 text-sm text-ash hover:text-cream sm:px-4" aria-label="Salir">
+              <IconLogout width="18" height="18" className="sm:hidden" />
+              <span className="hidden sm:inline">Salir</span>
+            </button>
           </div>
         </div>
-        <nav className="wrap flex gap-1 overflow-x-auto pb-2 [scrollbar-width:none]" role="tablist" aria-label="Secciones del panel">
+        <nav className="wrap hidden gap-1 pb-2 sm:flex" role="tablist" aria-label="Secciones del panel">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -126,9 +151,37 @@ function Dashboard({ session, onLogout }) {
           ))}
         </nav>
       </header>
-      <main className="wrap space-y-6 py-8">
+
+      {/* Celular: pestañas abajo, al alcance del pulgar */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 [body:has([aria-modal=true])_&]:hidden border-t border-cream/10 bg-carbon/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
+        role="tablist"
+        aria-label="Secciones del panel"
+      >
+        {TABS.map(({ id, short, label, Icon }) => {
+          const on = tab === id
+          return (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={on}
+              aria-label={label}
+              onClick={() => setTab(id)}
+              className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors active:scale-95 ${
+                on ? 'text-gold' : 'text-ash'
+              }`}
+            >
+              <span className={`grid h-7 w-12 place-items-center rounded-full transition-colors ${on ? 'bg-gold/15' : ''}`}>
+                <Icon width="20" height="20" />
+              </span>
+              {short}
+            </button>
+          )
+        })}
+      </nav>
+
+      <main className="wrap space-y-6 py-6 sm:py-8">
         <DemoNotice />
-        <p className="text-sm text-ash">Sesión: {session?.user?.email}</p>
         {loading ? (
           <p className="text-ash">Cargando datos…</p>
         ) : (
@@ -139,6 +192,7 @@ function Dashboard({ session, onLogout }) {
             {tab === 'customize' && <CustomizeTab />}
           </>
         )}
+        <p className="pt-2 text-xs text-ash">Sesión: {session?.user?.email}</p>
       </main>
     </div>
   )

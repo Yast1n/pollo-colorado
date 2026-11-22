@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useStore } from '../context/StoreContext'
 import { gsap, useGSAP, MQ } from '../lib/gsap'
-import { chileNow, groupHours, openState } from '../utils/hours'
+import { chileNow, dayPhrase, groupHours, openState, scheduleDriven } from '../utils/hours'
 import { mapsLinks, whatsappLink } from '../utils/whatsapp'
 import StatusBadge, { useStoreStatus } from './StatusBadge'
 import { IconClock, IconPin, IconWhatsApp } from './Icons'
@@ -18,8 +18,8 @@ export default function Visit() {
   const liveLine =
     status === 'open' && os.open
       ? `Cierra hoy a las ${os.closes}`
-      : status === 'scheduling' && !os.open && os.opens
-        ? `Abre ${os.day} a las ${os.opens}`
+      : (status === 'scheduling' || (status === 'closed' && scheduleDriven(config, now))) && !os.open && os.opens
+        ? `Abre ${dayPhrase(os.day)} a las ${os.opens}`
         : null
   const maps = mapsLinks(config.maps_query || config.address)
 
