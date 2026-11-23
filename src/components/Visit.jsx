@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useStore } from '../context/StoreContext'
 import { gsap, useGSAP, MQ } from '../lib/gsap'
 import { chileNow, dayPhrase, groupHours, openState, scheduleDriven } from '../utils/hours'
-import { mapsLinks, whatsappLink } from '../utils/whatsapp'
+import { altContacts, mapsLinks, whatsappLink } from '../utils/whatsapp'
 import StatusBadge, { useStoreStatus } from './StatusBadge'
 import { IconClock, IconPin, IconWhatsApp } from './Icons'
 
@@ -22,6 +22,7 @@ export default function Visit() {
         ? `Abre ${dayPhrase(os.day)} a las ${os.opens}`
         : null
   const maps = mapsLinks(config.maps_query || config.address)
+  const alts = altContacts(config)
 
   // Momento tipográfico: "PIRQUE" se desliza con el scroll (texto decorativo, no información).
   useGSAP(
@@ -112,6 +113,25 @@ export default function Visit() {
                 <IconWhatsApp className="text-[#25D366]" /> {v.btn_whatsapp}
               </a>
             </div>
+            {alts.length > 0 && (
+              <div className="mt-4 border-t border-cream/10 pt-4">
+                <p className="text-sm text-ash">¿No te respondemos? Escríbenos también a:</p>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {alts.map((a) => (
+                    <li key={a.number}>
+                      <a
+                        href={whatsappLink(a.number, config.greeting)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-cream/20 px-4 text-sm font-semibold transition-colors hover:border-[#25D366]"
+                      >
+                        <IconWhatsApp className="text-[#25D366]" /> {a.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -46,7 +46,7 @@ const FormCtx = createContext(null)
 
 // Campos que gestionan otras pestañas (Operación / Mi negocio): esta pestaña nunca los guarda,
 // así no pisa un cambio de estado hecho desde otro dispositivo mientras editas textos.
-const OTHER_TABS = ['status', 'status_auto', 'status_date', 'announcement', 'announcement_enabled', 'whatsapp', 'greeting', 'address', 'maps_query', 'delivery_note', 'hours', 'socials']
+const OTHER_TABS = ['status', 'status_auto', 'status_date', 'announcement', 'announcement_enabled', 'whatsapp', 'whatsapp_alt', 'greeting', 'address', 'maps_query', 'delivery_note', 'hours', 'socials']
 const ownFields = (cfg) => Object.fromEntries(Object.entries(cfg).filter(([k]) => !OTHER_TABS.includes(k)))
 
 function Text({ label, path, area, hint, wide, max, placeholder }) {

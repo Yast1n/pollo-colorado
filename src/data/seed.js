@@ -193,6 +193,8 @@ export const SEED_CONFIG = {
   announcement: '¡Nueva tanda de pollos saliendo de las brasas a las 13:30 hrs!',
   announcement_enabled: true,
   whatsapp: '56900000000',
+  // Números de respaldo por si el principal no responde: [{ label: 'Caja', number: '569…' }]
+  whatsapp_alt: [],
   greeting: 'Hola Pollo Colorado 👋 Quiero consultar disponibilidad para este pedido:',
   hero_title: 'Pollos asados a las brasas',
   hero_subtitle: 'Calibrados 2.4 – 2.5 kg, adobados la noche anterior y dorados a carbón en Pirque.',

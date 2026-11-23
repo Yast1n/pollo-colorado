@@ -4,7 +4,7 @@ import { useStore } from '../context/StoreContext'
 import { gsap, MQ } from '../lib/gsap'
 import { assetUrl, formatCLP } from '../utils/format'
 import { timeSlots } from '../utils/hours'
-import { buildOrderMessage, whatsappLink } from '../utils/whatsapp'
+import { altContacts, buildOrderMessage, whatsappLink } from '../utils/whatsapp'
 import { statusInfo, useStoreStatus } from './StatusBadge'
 import AnimatedPrice from './AnimatedPrice'
 import { IconCheck, IconClose, IconMinus, IconPlus, IconWhatsApp, IconBag } from './Icons'
@@ -130,6 +130,7 @@ export default function CartDrawer() {
     notes: form.notes,
   })
   const href = whatsappLink(config.whatsapp, message)
+  const alts = altContacts(config)
 
   const onSend = (e) => {
     if (addressMissing || !available.length) {
@@ -234,6 +235,24 @@ export default function CartDrawer() {
                 <a href={href} target="_blank" rel="noopener noreferrer" className="btn w-full bg-[#25D366] text-carbon hover:bg-[#1ebe5a]">
                   <IconWhatsApp /> Abrir WhatsApp otra vez
                 </a>
+                {alts.length > 0 && (
+                  <div className="my-2 rounded-2xl border border-carbon/10 bg-white/60 p-4 text-left">
+                    <p className="text-sm font-semibold">¿No te responden? Envía el mismo pedido a otro número:</p>
+                    <div className="mt-3 grid gap-2">
+                      {alts.map((a) => (
+                        <a
+                          key={a.number}
+                          href={whatsappLink(a.number, message)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn w-full border border-[#1a9e4b]/40 text-carbon hover:border-[#1a9e4b]"
+                        >
+                          <IconWhatsApp className="text-[#1a9e4b]" /> {a.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <button type="button" onClick={() => setSent(false)} className="btn w-full border border-carbon/20 hover:border-carbon/50">
                   Volver a mi pedido
                 </button>

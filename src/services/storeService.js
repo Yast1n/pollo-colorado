@@ -59,6 +59,7 @@ const withConfigDefaults = (data) => {
   if (!Array.isArray(c.hours) || c.hours.length !== 7) c.hours = SEED_CONFIG.hours
   if (!Array.isArray(c.process.steps) || !c.process.steps.length) c.process.steps = SEED_CONFIG.process.steps
   if (!Array.isArray(c.cart.quick_notes)) c.cart.quick_notes = SEED_CONFIG.cart.quick_notes
+  if (!Array.isArray(c.whatsapp_alt)) c.whatsapp_alt = []
   return c
 }
 

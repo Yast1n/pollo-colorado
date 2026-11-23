@@ -33,6 +33,25 @@ export function whatsappLink(number, text = '') {
   return `https://wa.me/${n}${q}`
 }
 
+export const validPhone = (n) => {
+  const d = onlyDigits(n)
+  return d.length >= 10 && d.length <= 15
+}
+
+// Números de respaldo válidos y distintos del principal, con un nombre para mostrar.
+export function altContacts(config) {
+  const main = onlyDigits(config?.whatsapp)
+  const seen = new Set([main])
+  const out = []
+  for (const c of Array.isArray(config?.whatsapp_alt) ? config.whatsapp_alt : []) {
+    const number = onlyDigits(c?.number)
+    if (!validPhone(number) || seen.has(number)) continue
+    seen.add(number)
+    out.push({ number, label: c?.label?.trim() || `WhatsApp ${out.length + 2}` })
+  }
+  return out
+}
+
 export function mapsLinks(query) {
   const q = encodeURIComponent(query || 'Pirque, Chile')
   return {
